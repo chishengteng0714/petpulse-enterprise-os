@@ -1,0 +1,3 @@
+"""
+Enterprise Home presentation components.
+"""

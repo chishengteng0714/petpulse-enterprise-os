@@ -1,0 +1,73 @@
+# ------------------------------------------------------
+# PetPulse Enterprise OS
+# Git Ignore
+# ------------------------------------------------------
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual Environment
+.venv/
+venv/
+env/
+ENV/
+
+# Streamlit Secrets
+.streamlit/secrets.toml
+
+# Environment Variables
+.env
+.env.*
+*.env
+
+# VS Code
+.vscode/
+
+# JetBrains IDE
+.idea/
+
+# Python Cache
+.pytest_cache/
+.mypy_cache/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# macOS
+.DS_Store
+
+# Windows
+Thumbs.db
+desktop.ini
+
+# Logs
+*.log
+
+# Temporary Files
+*.tmp
+*.bak
+
+# Git
+.git/
+
+# Build
+build/
+dist/
+
+# Python Packaging
+*.egg-info/
+
+# Coverage
+.coverage
+htmlcov/
+
+# Local Settings
+local_settings.py
+config.local.py
+
+# OpenAI
+openai_key.txt
+apikey.txt
+secret.txt

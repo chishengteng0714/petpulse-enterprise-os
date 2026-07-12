@@ -1,0 +1,810 @@
+﻿import streamlit as st
+
+from modules.platform.home.product_experience import build_enterprise_home_experience
+from modules.platform.home.executive_briefing import render_executive_briefing
+from modules.platform.home.enterprise_health import render_enterprise_health
+from modules.platform.home.risk_radar import render_risk_radar
+from modules.platform.home.opportunity_radar import render_opportunity_radar
+from modules.platform.home.workspace_gateway import render_workspace_gateway
+from modules.platform.specification.debug_panel import render_specification_debug_panel
+
+
+def render_enterprise_home():
+    """
+    Enterprise Home
+
+    PetPulse Enterprise OS v1.0 RC Final
+    RC Final Demo Candidate嚗isual Polish嚗?
+
+    ?祆???鞎祇???Presentation Flow??
+    銝憓?Runtime / Engine / Layer / Domain / API / Folder / Registry / State??
+
+    Demo Flow:
+    AI 隞??
+    ??隞敺捱蝑?
+    ??撌乩??亙
+    ??隡平?亙熒
+    ??憸券
+    ???璈?
+    ??隞撱箄降銝?甇?
+    """
+
+    tab_home, tab_spec = st.tabs(
+        [
+            "隞隡平擐?",
+            "?Ｗ?閬",
+        ]
+    )
+
+    with tab_home:
+        _render_rc_final_home()
+
+    with tab_spec:
+        render_specification_debug_panel()
+
+
+def _render_rc_final_home():
+    experience = build_enterprise_home_experience()
+
+    _render_home_hero(experience)
+    _render_section_gap()
+
+    render_executive_briefing(experience)
+    _render_section_gap()
+
+    render_workspace_gateway(experience)
+    _render_section_gap()
+
+    render_enterprise_health(experience)
+    _render_section_gap()
+
+    _render_radar_section(experience)
+    _render_section_gap()
+
+    _render_next_action_summary(experience)
+
+
+def _render_home_hero(experience):
+    """
+    RC Final Home Hero
+
+    擐??格?嚗?
+    霈蜓蝞∪ 30 蝘?圾隞隡平??捱蝑??◢?芾?璈???
+    """
+
+    st.caption("PETPULSE ENTERPRISE OS嚚??乩?璆剔??葉敹?)
+    st.markdown("# 隞隡平瘙箇?擐?")
+    st.markdown(f"### {experience.greeting}")
+    st.write(experience.briefing_summary)
+
+    _render_micro_gap()
+
+    decision_count = len(experience.decisions)
+    risk_count = len(experience.risks)
+    opportunity_count = len(experience.opportunities)
+
+    col_status, col_decision, col_risk, col_growth = st.columns(4)
+
+    with col_status:
+        with st.container(border=True):
+            st.caption("TODAY STATUS")
+            st.metric("?????, experience.operating_status)
+            st.caption(f"瘙箇?靽∪?嚗experience.confidence_level}")
+
+    with col_decision:
+        with st.container(border=True):
+            st.caption("DECISION")
+            st.metric("隞敺捱蝑?, f"{decision_count} ??)
+            st.caption("?芸??梁恣?惜蝣箄?")
+
+    with col_risk:
+        with st.container(border=True):
+            st.caption("RISK")
+            st.metric("憸券閮?", f"{risk_count} ??)
+            st.caption("???閫皜?)
+
+    with col_growth:
+        with st.container(border=True):
+            st.caption("GROWTH")
+            st.metric("?璈?", f"{opportunity_count} ??)
+            st.caption("?航?隡唳??)
+
+
+def _render_radar_section(experience):
+    """
+    Risk / Opportunity Radar
+
+    撠◢?芾?璈?銝行??嚗耦?蜓蝞∪?瑞???琿???
+    """
+
+    st.markdown("## 隞憸券???瑟???)
+    st.caption("撌血?蝞∠?撅斗憸券嚗?游??拙???脫??瑟???)
+
+    _render_micro_gap()
+
+    left_col, right_col = st.columns(2)
+
+    with left_col:
+        render_risk_radar(experience)
+
+    with right_col:
+        render_opportunity_radar(experience)
+
+
+def _render_next_action_summary(experience):
+    """
+    Next Action Summary
+
+    Demo 蝯偏?憛?
+    擐?銝辣隡詨????芣?蝣箏?閮港蜓蝞∩?銝甇亙?芾ㄐ??
+    """
+
+    st.markdown("## 隞撱箄降銝?甇?)
+    st.caption("靘隞閮?嚗etPulse 撱箄降???誑銝???雿?)
+
+    _render_micro_gap()
+
+    action_items = [
+        {
+            "eyebrow": "STEP 1",
+            "title": "蝣箄?隞蝞∠?瘙箇?",
+            "description": "?Ⅱ隤??⊥?脯?????蝡嗅?靽?臬?閬??唾???,
+            "workspace": "Enterprise Workspace",
+        },
+        {
+            "eyebrow": "STEP 2",
+            "title": "?亦?瘙箇???霅?",
+            "description": "?脣 Evidence Center嚗Ⅱ隤???皞??航??臭縑摨艾?,
+            "workspace": "Evidence Center",
+        },
+        {
+            "eyebrow": "STEP 3",
+            "title": "撅?擃?瘜刻降憿蕭頩?,
+            "description": "????擃??奎???瑁降憿遣蝡?蝥蕭頩扎?,
+            "workspace": "Investigation OS",
+        },
+    ]
+
+    cols = st.columns(3)
+
+    for col, item in zip(cols, action_items):
+        with col:
+            with st.container(border=True):
+                st.caption(item["eyebrow"])
+                st.markdown(f"### {item['title']}")
+                st.write(item["description"])
+                st.caption(f"撱箄降?亙嚗item['workspace']}")
+
+    _render_micro_gap()
+
+    st.info(
+        "Demo Freeze 撱箄降嚗??靽?隞瘙箇?瘚?閰喟敦??鈭斤 Workspace ??Evidence Center ?踵??
+    )
+
+
+def _render_section_gap():
+    """
+    蝯曹?擐?銝餉??憛?頝?
+    ?函征?賢?隞??憭?divider嚗?雿?Dashboard ??
+    """
+
+    st.markdown("")
+    st.markdown("")
+    st.divider()
+    st.markdown("")
+
+
+def _render_micro_gap():
+    """
+    蝯曹??∠?蝢方?隤芣???銋???????
+    """
+
+    st.markdown("")
+from dataclasses import dataclass
+from typing import List
+
+
+@dataclass
+class ExecutiveDecision:
+    title: str
+    description: str
+    owner: str
+    urgency: str
+    next_step: str
+
+
+@dataclass
+class HealthSignal:
+    label: str
+    value: str
+    status: str
+    detail: str
+
+
+@dataclass
+class RiskSignal:
+    title: str
+    description: str
+    severity: str
+    action: str
+
+
+@dataclass
+class OpportunitySignal:
+    title: str
+    description: str
+    potential: str
+    recommendation: str
+
+
+@dataclass
+class WorkspaceEntry:
+    title: str
+    description: str
+    status: str
+    target: str
+
+
+@dataclass
+class EnterpriseHomeExperience:
+    greeting: str
+    briefing_title: str
+    briefing_summary: str
+    operating_status: str
+    confidence_level: str
+    decisions: List[ExecutiveDecision]
+    health_signals: List[HealthSignal]
+    risks: List[RiskSignal]
+    opportunities: List[OpportunitySignal]
+    workspaces: List[WorkspaceEntry]
+
+
+def build_enterprise_home_experience() -> EnterpriseHomeExperience:
+    """
+    Enterprise Home RC Final Product Experience
+
+    RC Final Demo Candidate嚗isual Polish嚗?
+
+    ?祆??芰雁霅琿???蝷箇鞈?璅∪???Demo ????
+    銝憓?Runtime / Engine / Layer / Domain / API / Folder / Registry / State??
+    """
+
+    return EnterpriseHomeExperience(
+        greeting="隞予隡平??摨瘀?撱箄降????3 ?恣?捱蝑?,
+        briefing_title="AI 隞瘙箇???",
+        briefing_summary=(
+            "PetPulse 撌脫???亦?????????鈭?蝬剜??亙熒嚗?
+            "?桀?瘝?蝡?折?銵??望??遣霅啁恣?惜?Ⅱ隤??∠???
+            "?????奎???瑚??捱蝑??漱?勗???Workspace 撅??瑁???
+        ),
+        operating_status="?亙熒",
+        confidence_level="擃?,
+        decisions=[
+            ExecutiveDecision(
+                title="?鈭???臬?Ⅳ",
+                description="?鈭?蝬剜?甇??嚗???批捆????∠???憟?,
+                owner="?蝬?",
+                urgency="隞蝣箄?",
+                next_step="蝣箄??祇望??⊥??蜓頠詻摰寧?憟?鞎痊蝒??,
+            ),
+            ExecutiveDecision(
+                title="??擃?閮??臬??",
+                description="?典?閮??葉?潭???蝔?瘨祥擃?嚗遣霅啣?蝯曹??????????,
+                owner="??銵",
+                urgency="??釣",
+                next_step="?渡?銝餉?閮?靘?嚗Ⅱ隤恥?冗蝢方??撣????,
+            ),
+            ExecutiveDecision(
+                title="蝡嗅?靽?臬?閬???,
+                description="蝡嗅??剜?靽????嚗?賢蔣?踵??∪?鞈潸?頧???,
+                owner="????",
+                urgency="?祇梯?隡?,
+                next_step="瘥?靽??蜓??憿????嚗?隡唳?西矽?湔暑??憟?,
+            ),
+        ],
+        health_signals=[
+            HealthSignal(
+                label="隡平?亙熒摨?,
+                value="96",
+                status="?亙熒",
+                detail="???脤????∩????批捆??蝬剜?蝛拙???,
+            ),
+            HealthSignal(
+                label="敺捱蝑???,
+                value="3",
+                status="隞?芸?",
+                detail="撱箄降蝞∠?撅支??亙?摰??孵?蝣箄???,
+            ),
+            HealthSignal(
+                label="憸券閮?",
+                value="3",
+                status="閫皜砌葉",
+                detail="?桀??芷?擃??璈?雿?閬?蝥蕭頩扎?,
+            ),
+            HealthSignal(
+                label="?璈?",
+                value="3",
+                status="?舀??,
+                detail="???摨瑕?憿????批捆?瑕??券脩征??,
+            ),
+        ],
+        risks=[
+            RiskSignal(
+                title="??擃?閮??澈",
+                description="蝷曄黎閮????葉?潭???蝔?敺???瘨祥擃???,
+                severity="銝?,
+                action="?郊摰Ｘ??冗蝢方??撣??敺?,
+            ),
+            RiskSignal(
+                title="蝡嗅?靽憯???",
+                description="蝡嗅??剜?瘣餃?????嚗?賢蔣?踵??∪?鞈潸?頧???,
+                severity="銝?,
+                action="閰摯?撠惇?芣??摰寧?憟?阡?閬矽?氬?,
+            ),
+            RiskSignal(
+                title="?脤??撠摰頧?",
+                description="?梢???閮?憓?嚗?隞?蝣箄??批捆鈭??臬??撠???,
+                severity="雿?,
+                action="餈質馱?批捆鈭???????敺?頧?銵函??,
+            ),
+        ],
+        opportunities=[
+            OpportunitySignal(
+                title="???批捆",
+                description="憌????亥??亙虜?扯風銝駁??瑕?擃????嗉?瞏???,
+                potential="擃?,
+                recommendation="閬?銝蝯?摰嗅??批捆嚗?擃??閮芾??靽∩遙??,
+            ),
+            OpportunitySignal(
+                title="撖萇?亙熒??",
+                description="瘨祥???????亥??亙虜?扯風閮?摨行?擃?,
+                potential="擃?,
+                recommendation="雿?祇曹蜓閬??蜓頠賂?銝脰?批捆????瘚?,
+            ),
+            OpportunitySignal(
+                title="瘥酋?粹???",
+                description="?粹??隡渲??扯風???瑕?蝷曄黎?澈??,
+                potential="銝?,
+                recommendation="閮剛?頛?鈭??批捆嚗?擃????芰?湔??,
+            ),
+        ],
+        workspaces=[
+            WorkspaceEntry(
+                title="Enterprise Workspace",
+                description="??隞?芸?鈭??捱蝑???銵?餈質馱??,
+                status="Ready",
+                target="隞??撌乩???,
+            ),
+            WorkspaceEntry(
+                title="Evidence Center",
+                description="餈賣滲瘙箇?????????皞??臭縑摨艾?,
+                status="Ready",
+                target="霅?銝剖?",
+            ),
+            WorkspaceEntry(
+                title="Investigation OS",
+                description="??擃?瘜刻降憿脰?瘛勗漲????蝥蕭頩扎?,
+                status="Ready",
+                target="隤踵撌乩??",
+            ),
+        ],
+    )
+import streamlit as st
+
+
+def render_ai_summary(runtime=None):
+    """
+    AI Executive Summary
+
+    RC Final Demo Candidate嚗isual Polish嚗?
+
+    Presentation Layer Only.
+    銝憓?Runtime / Engine / Layer / Domain / API / Folder / Registry / State??
+    """
+
+    summary = _get_ai_summary(runtime)
+
+    st.markdown("## AI 隞??")
+    st.caption("撠??乩?璆剛????銝餌恣?舐?亙?瑞???????)
+
+    st.markdown("")
+
+    with st.container(border=True):
+        header_col, status_col = st.columns([3, 1])
+
+        with header_col:
+            st.caption("AI DECISION SUMMARY")
+            st.markdown("### 隞???方?")
+            st.write(summary["headline"])
+
+        with status_col:
+            st.caption("?方????)
+            st.markdown("### ?單?摰?")
+
+    st.markdown("")
+
+    left_col, right_col = st.columns([1.4, 1])
+
+    with left_col:
+        with st.container(border=True):
+            st.caption("KEY OBSERVATIONS")
+            st.markdown("### ?閫撖?)
+
+            for index, takeaway in enumerate(summary["takeaways"], start=1):
+                st.markdown(f"**{index}. {takeaway}**")
+
+    with right_col:
+        with st.container(border=True):
+            st.caption("TODAY FOCUS")
+            st.markdown("### 撱箄降?")
+            st.write(summary["recommended_focus"])
+
+
+def _get_ai_summary(runtime=None):
+    """
+    ?? AI ????
+
+    靽? runtime ???詨捆?Ｘ??澆蝡胯?
+    RC Final 擐?銝憓?Runtime??
+    """
+
+    if runtime is None:
+        return _get_fallback_ai_summary()
+
+    if hasattr(runtime, "get_summary"):
+        try:
+            runtime_summary = runtime.get_summary()
+
+            return {
+                "headline": runtime_summary.get(
+                    "ai_headline",
+                    _get_fallback_ai_summary()["headline"],
+                ),
+                "takeaways": runtime_summary.get(
+                    "ai_takeaways",
+                    _get_fallback_ai_summary()["takeaways"],
+                ),
+                "recommended_focus": runtime_summary.get(
+                    "ai_recommended_focus",
+                    _get_fallback_ai_summary()["recommended_focus"],
+                ),
+            }
+
+        except Exception:
+            return _get_fallback_ai_summary()
+
+    return _get_fallback_ai_summary()
+
+
+def _get_fallback_ai_summary():
+    """
+    AI Summary fallback??
+    """
+
+    return {
+        "headline": (
+            "隞隡平??摨瘀????脤????∩??雁?帘摰?
+            "?桀?瘝?蝡?折?銵??望?嚗遣霅啣?摰??蝬???????蝡嗅?靽銝?蝞∠?瘙箇???
+        ),
+        "takeaways": [
+            "?鈭?蝬剜?甇??嚗閰摯???批捆????∠???憟?,
+            "??擃?閮????澈嚗遣霅啣?蝯曹?摰Ｘ??冗蝢方??撣??敺?,
+            "蝡嗅??剜?靽????嚗?閰摯?臬敶梢??頃????,
+        ],
+        "recommended_focus": (
+            "隞撱箄降?嚗?蝣箄?銝?蝞∠?瘙箇?嚗???Enterprise Workspace??
+            "Evidence Center ??Investigation OS ?踵敺??瑁???
+        ),
+    }
+import streamlit as st
+
+from modules.platform.home.product_experience import EnterpriseHomeExperience
+
+
+def render_executive_briefing(experience: EnterpriseHomeExperience):
+    """
+    Executive Briefing / Decision Queue
+
+    RC Final Demo Candidate嚗isual Polish嚗?
+
+    ?祆??芾?鞎祇????亙?瘙箇??憛?
+    銝憓?Runtime / Engine / Layer / Domain / API / Folder / Registry / State??
+    """
+
+    st.markdown("## 隞敺捱蝑?)
+    st.caption("銝餌恣隞予?芷?閬?蝣箄???隞嗡?嚗隞敦蝭鈭斤 Workspace ?踵??)
+
+    st.markdown("")
+
+    for index, decision in enumerate(experience.decisions, start=1):
+        _render_decision_card(index, decision)
+
+
+def _render_decision_card(index, decision):
+    with st.container(border=True):
+        title_col, meta_col = st.columns([2.6, 1])
+
+        with title_col:
+            st.caption(f"DECISION {index}")
+            st.markdown(f"### {decision.title}")
+            st.write(decision.description)
+            st.caption(f"撱箄降銝?甇伐?{decision.next_step}")
+
+        with meta_col:
+            st.caption("鞎痊蝒")
+            st.markdown(f"**{decision.owner}**")
+
+            st.caption("瘙箇???")
+            st.markdown(f"**{decision.urgency}**")
+import streamlit as st
+
+from modules.platform.home.product_experience import EnterpriseHomeExperience
+
+
+def render_workspace_gateway(experience: EnterpriseHomeExperience):
+    """
+    Workspace Gateway
+
+    RC Final Demo Candidate嚗isual Polish嚗?
+
+    ?祆??芾?鞎祇???Workspace ?亙撅內??
+    銝憓?Runtime / Engine / Layer / Domain / API / Folder / Registry / State??
+    """
+
+    st.markdown("## 銝?甇亙極雿??)
+    st.caption("擐?鞎痊瘙箇??斗嚗orkspace 鞎痊?瑁??蕭頩方?霅??交??)
+
+    st.markdown("")
+
+    cols = st.columns(len(experience.workspaces))
+
+    for index, (col, workspace) in enumerate(zip(cols, experience.workspaces), start=1):
+        with col:
+            _render_workspace_card(index, workspace)
+
+
+def _render_workspace_card(index, workspace):
+    with st.container(border=True):
+        st.caption(f"WORKSPACE {index}")
+        st.markdown(f"### {workspace.title}")
+        st.write(workspace.description)
+
+        st.caption("銝餉??券?)
+        st.markdown(f"**{workspace.target}**")
+
+        st.caption("?桀????)
+        st.markdown(f"**{workspace.status}**")
+
+        st.button(
+            "?脣撌乩??",
+            key=f"open_workspace_{index}_{workspace.target}",
+            use_container_width=True,
+            disabled=True,
+        )
+import streamlit as st
+
+
+def render_workspace_launcher(experience):
+    """
+    Workspace Launcher
+
+    RC Final Demo Candidate嚗isual Polish嚗?
+
+    Presentation Layer Only.
+    撠極雿??亙頧陌?蜓蝞?Demo ??頝舐???
+    銝憓?Runtime / Engine / Layer / Domain / API / Folder / Registry / State??
+    """
+
+    workspaces = getattr(experience, "workspaces", [])
+
+    if not workspaces:
+        _render_empty_workspace_state()
+        return
+
+    _render_decision_route(workspaces)
+    _render_demo_route_note()
+
+
+def _render_decision_route(workspaces):
+    """
+    瘙箇?頝舐???
+    雿輻?Ｘ? experience.workspaces嚗??啣?鞈?蝯???
+    """
+
+    st.markdown("### Demo 撱箄降頝舐?")
+    st.caption("擐?摰?蝞∠??斗敺?靘??脣撌乩??摰?霅??交???蕭頩扎?)
+
+    st.markdown("")
+
+    columns = st.columns(len(workspaces))
+
+    for index, workspace in enumerate(workspaces):
+        with columns[index]:
+            _render_route_card(index, workspace)
+
+
+def _render_route_card(index, workspace):
+    """
+    ?桐?瘙箇?頝舐??～?
+    """
+
+    with st.container(border=True):
+        st.caption(_get_step_label(index))
+        st.markdown(f"#### {workspace.title}")
+
+        target = getattr(workspace, "target", None)
+        status = getattr(workspace, "status", None)
+        description = getattr(workspace, "description", None)
+
+        if description:
+            st.write(description)
+
+        if target:
+            st.caption("?桃?")
+            st.markdown(f"**{target}**")
+
+        if status:
+            st.caption("???)
+            st.markdown(f"**{status}**")
+
+
+def _render_demo_route_note():
+    """
+    Demo 頝舐??嗅偏??
+    """
+
+    st.info(
+        "Demo 撱箄降??嚗??乩?璆剝?????Enterprise Workspace ??Evidence Center ??Investigation OS??
+    )
+
+
+def _render_empty_workspace_state():
+    """
+    ?∪極雿????
+    """
+
+    st.info("?桀?撠閮剖??舫脣?極雿???)
+    st.caption("RC Final 銝憓極雿?嚗?靘??Workspace Registry ?箸???)
+
+
+def _get_step_label(index):
+    """
+    瘙箇?甇仿?璅惜??
+    """
+
+    labels = [
+        "STEP 1",
+        "STEP 2",
+        "STEP 3",
+        "STEP 4",
+    ]
+
+    if index < len(labels):
+        return labels[index]
+
+    return f"STEP {index + 1}"
+import streamlit as st
+
+from modules.platform.home.product_experience import EnterpriseHomeExperience
+
+
+def render_enterprise_health(experience: EnterpriseHomeExperience):
+    """
+    Enterprise Health
+
+    RC Final Demo Candidate嚗isual Polish嚗?
+
+    ?祆??芾?鞎祇???璆剖摨瑞???蝷箝?
+    銝憓?Runtime / Engine / Layer / Domain / API / Folder / Registry / State??
+    """
+
+    st.markdown("## 隡平???亙熒")
+    st.caption("?ㄐ?芸??曆蜓蝞⊿?閬???????閰喟敦??鈭斤 Workspace ?踵??)
+
+    st.markdown("")
+
+    cols = st.columns(len(experience.health_signals))
+
+    for col, signal in zip(cols, experience.health_signals):
+        with col:
+            _render_health_card(signal)
+
+
+def _render_health_card(signal):
+    with st.container(border=True):
+        st.caption(signal.label.upper())
+        st.markdown(f"## {signal.value}")
+        st.markdown(f"**{signal.status}**")
+        st.caption(signal.detail)
+import streamlit as st
+
+from modules.platform.home.product_experience import EnterpriseHomeExperience
+
+
+def render_risk_radar(experience: EnterpriseHomeExperience):
+    """
+    Risk Radar
+
+    RC Final Demo Candidate嚗isual Polish嚗?
+
+    ?祆??芾?鞎祇??◢?芣?閬?
+    擐??芸?蝑?憭拇??芯?憸券?閬釣??
+    閰喟敦??鈭斤 Workspace ??Evidence Center??
+
+    銝憓?Runtime / Engine / Layer / Domain / API /
+    Folder / Registry / State??
+    """
+
+    st.markdown("### 憸券?琿?")
+    st.caption("隞?閬?蝥?瘜函?憸券閮???)
+
+    st.markdown("")
+
+    for index, risk in enumerate(experience.risks, start=1):
+        _render_risk_card(index, risk)
+
+
+def _render_risk_card(index, risk):
+    with st.container(border=True):
+
+        header_col, severity_col = st.columns([3, 1])
+
+        with header_col:
+            st.caption(f"RISK {index}")
+            st.markdown(f"#### {risk.title}")
+            st.write(risk.description)
+
+        with severity_col:
+            st.caption("敶梢蝔漲")
+            st.markdown(f"### {risk.severity}")
+
+        st.markdown("")
+
+        st.caption("撱箄降銵?")
+        st.write(risk.action)
+import streamlit as st
+
+from modules.platform.home.product_experience import EnterpriseHomeExperience
+
+
+def render_opportunity_radar(experience: EnterpriseHomeExperience):
+    """
+    Opportunity Radar
+
+    RC Final Demo Candidate嚗isual Polish嚗?
+
+    ?祆??芾?鞎祇????瑟???閬?
+    擐??芸?蝑?憭拇??芯?璈??澆??券脯?
+    閰喟敦??鈭斤 Workspace ??Evidence Center??
+
+    銝憓?Runtime / Engine / Layer / Domain / API /
+    Folder / Registry / State??
+    """
+
+    st.markdown("### ?璈?")
+    st.caption("隞?澆??券脩???孵???)
+
+    st.markdown("")
+
+    for index, opportunity in enumerate(experience.opportunities, start=1):
+        _render_opportunity_card(index, opportunity)
+
+
+def _render_opportunity_card(index, opportunity):
+    with st.container(border=True):
+
+        header_col, potential_col = st.columns([3, 1])
+
+        with header_col:
+            st.caption(f"OPPORTUNITY {index}")
+            st.markdown(f"#### {opportunity.title}")
+            st.write(opportunity.description)
+
+        with potential_col:
+            st.caption("?券脫???)
+            st.markdown(f"### {opportunity.potential}")
+
+        st.markdown("")
+
+        st.caption("撱箄降?券?)
+        st.write(opportunity.recommendation)

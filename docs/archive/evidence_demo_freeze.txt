@@ -1,0 +1,823 @@
+﻿import streamlit as st
+
+from modules.evidence_center.service import EvidenceService
+from modules.evidence_center.components.evidence_explorer import (
+    render_evidence_explorer,
+)
+from modules.evidence_center.canvas.workspace import (
+    render_evidence_canvas_workspace,
+)
+from modules.evidence_center.intelligence.workspace import (
+    render_enterprise_intelligence_hub_tab,
+    get_enterprise_intelligence_tab_label,
+    is_enterprise_intelligence_hub_available,
+)
+
+
+def render_evidence_workspace():
+    """
+    Evidence Workspace
+
+    PetPulse Enterprise Intelligence Platform v1.0
+
+    Evidence Workspace ?曉甇???乩?嚗?
+    - Evidence Canvas
+    - Evidence Explorer
+    - Enterprise Intelligence Hub
+
+    Enterprise Intelligence Hub ??Sprint D ?像?啁? Intelligence Layer嚗?
+    ?芯? Executive Briefing?trategy Planning?nterprise AI??
+    Risk Analysis?pportunity Discovery?gent Runtime ?賣?敺ㄐ撱嗡撓??
+    """
+
+    service = EvidenceService()
+    evidence_items = service.get_all_evidence()
+
+    st.markdown("# Evidence Center")
+    st.caption(
+        "Single Source of Truth for public signals, evidence, relationship mapping, "
+        "observability and enterprise intelligence."
+    )
+
+    if not evidence_items:
+        st.info("?桀?撠 Evidence 鞈???)
+        return
+
+    tab_labels = [
+        "Evidence Canvas",
+        "Evidence Explorer",
+    ]
+
+    if is_enterprise_intelligence_hub_available():
+        tab_labels.append(get_enterprise_intelligence_tab_label())
+
+    tabs = st.tabs(tab_labels)
+
+    with tabs[0]:
+        render_evidence_canvas_workspace(evidence_items)
+
+    with tabs[1]:
+        render_evidence_explorer(evidence_items)
+
+    if is_enterprise_intelligence_hub_available() and len(tabs) >= 3:
+        with tabs[2]:
+            render_enterprise_intelligence_hub_tab()
+
+
+def render():
+    render_evidence_workspace()
+import pandas as pd
+import streamlit as st
+
+
+def _format_value(value):
+    """
+    撠?Enum / 銝?祆?摮??刻???Ｗ霈摮葡??
+    """
+
+    if value is None:
+        return "Unknown"
+
+    if hasattr(value, "value"):
+        return value.value
+
+    return str(value)
+
+
+def render_evidence_table(evidence_items):
+    """
+    Evidence Table Component
+
+    Presentation Layer ?辣??
+
+    鞎痊嚗?
+    1. ? Evidence Detail Table
+    2. ?? Evidence 敹恍?撠???
+
+    銝?鞎穿?
+    1. ?亥岷鞈?
+    2. 蝭拚鞈?
+    3. ??鞈?
+    4. ?澆 Evidence Explorer
+    5. ?澆 Evidence Detail
+    """
+
+    evidence_items = evidence_items or []
+
+    st.caption("隞亥”?潭撘翰??撠?Evidence嚗?潭?詻?摨?敺?撘??)
+
+    if not evidence_items:
+        st.info("?桀?瘝?蝚血?璇辣??Evidence??)
+        return
+
+    rows = []
+
+    for item in evidence_items:
+        rows.append(
+            {
+                "Platform": _format_value(item.platform),
+                "Topic": _format_value(item.topic),
+                "Sentiment": _format_value(item.sentiment),
+                "Author": _format_value(item.author),
+                "Engagement": item.engagement,
+                "Published": _format_value(item.published_time),
+            }
+        )
+
+    df = pd.DataFrame(rows)
+
+    st.dataframe(
+        df,
+        use_container_width=True,
+        hide_index=True,
+    )
+import streamlit as st
+
+
+def render_evidence_explorer(evidence_items):
+    """
+    Evidence Explorer
+
+    Master / Detail 霅??汗?辣??
+    """
+
+    st.markdown("## Evidence Explorer")
+    st.caption("?汗????皞???銝血???霅?? Detail?ompare ??Investigation OS??)
+
+    _render_explorer_summary(evidence_items)
+    filtered_items = _render_filters(evidence_items)
+
+    col1, col2 = st.columns([1.25, 1])
+
+    with col1:
+        _render_evidence_list(filtered_items)
+
+    with col2:
+        _render_evidence_detail(evidence_items)
+
+
+def _render_explorer_summary(evidence_items):
+    platforms = {
+        _format_value(_safe_get(item, "platform", "Unknown"))
+        for item in evidence_items
+    }
+
+    topics = {
+        _format_value(_safe_get(item, "topic", "Unknown"))
+        for item in evidence_items
+    }
+
+    negative_count = len(
+        [
+            item
+            for item in evidence_items
+            if _format_value(_safe_get(item, "sentiment", "")).lower()
+            in ["negative", "鞎"]
+        ]
+    )
+
+    col1, col2, col3, col4 = st.columns(4)
+
+    col1.metric("Evidence", len(evidence_items))
+    col2.metric("Platforms", len(platforms))
+    col3.metric("Topics", len(topics))
+    col4.metric("Negative", negative_count)
+
+
+def _render_filters(evidence_items):
+    st.markdown("### Filters")
+
+    platforms = sorted(
+        {
+            _format_value(_safe_get(item, "platform", "Unknown"))
+            for item in evidence_items
+        }
+    )
+
+    topics = sorted(
+        {
+            _format_value(_safe_get(item, "topic", "Unknown"))
+            for item in evidence_items
+        }
+    )
+
+    sentiments = sorted(
+        {
+            _format_value(_safe_get(item, "sentiment", "Unknown"))
+            for item in evidence_items
+        }
+    )
+
+    col1, col2, col3, col4 = st.columns(4)
+
+    with col1:
+        platform_filter = st.selectbox(
+            "Platform",
+            options=["All"] + platforms,
+            key="evidence_explorer_platform_filter",
+        )
+
+    with col2:
+        topic_filter = st.selectbox(
+            "Topic",
+            options=["All"] + topics,
+            key="evidence_explorer_topic_filter",
+        )
+
+    with col3:
+        sentiment_filter = st.selectbox(
+            "Sentiment",
+            options=["All"] + sentiments,
+            key="evidence_explorer_sentiment_filter",
+        )
+
+    with col4:
+        keyword = st.text_input(
+            "Keyword",
+            value="",
+            key="evidence_explorer_keyword_filter",
+        )
+
+    filtered_items = []
+
+    for item in evidence_items:
+        platform = _format_value(_safe_get(item, "platform", "Unknown"))
+        topic = _format_value(_safe_get(item, "topic", "Unknown"))
+        sentiment = _format_value(_safe_get(item, "sentiment", "Unknown"))
+
+        title = _format_value(_safe_get(item, "title", ""))
+        content = _format_value(_safe_get(item, "content", ""))
+
+        if platform_filter != "All" and platform != platform_filter:
+            continue
+
+        if topic_filter != "All" and topic != topic_filter:
+            continue
+
+        if sentiment_filter != "All" and sentiment != sentiment_filter:
+            continue
+
+        if keyword:
+            search_text = f"{title} {content}".lower()
+
+            if keyword.lower() not in search_text:
+                continue
+
+        filtered_items.append(item)
+
+    st.caption(f"?桀?憿舐內 {len(filtered_items)} / {len(evidence_items)} ??Evidence")
+
+    return filtered_items
+
+
+def _render_evidence_list(evidence_items):
+    st.markdown("### Evidence List")
+
+    if not evidence_items:
+        st.info("?桀?瘝?蝚血?璇辣??Evidence??)
+        return
+
+    sorted_items = sorted(
+        evidence_items,
+        key=lambda item: _safe_number(_safe_get(item, "engagement", 0)),
+        reverse=True,
+    )
+
+    for item in sorted_items:
+        _render_evidence_card(item)
+
+
+def _render_evidence_card(item):
+    evidence_id = _get_evidence_id(item)
+
+    title = _format_value(_safe_get(item, "title", "Untitled Evidence"))
+    content = _format_value(_safe_get(item, "content", ""))
+    platform = _format_value(_safe_get(item, "platform", "Unknown"))
+    topic = _format_value(_safe_get(item, "topic", "Unknown"))
+    sentiment = _format_value(_safe_get(item, "sentiment", "Unknown"))
+    engagement = _safe_number(_safe_get(item, "engagement", 0))
+
+    with st.container(border=True):
+        st.markdown(f"#### {title}")
+        st.caption(f"{platform} 繚 {topic} 繚 {sentiment}")
+
+        if content:
+            st.write(content[:220])
+
+        col1, col2, col3 = st.columns(3)
+
+        with col1:
+            st.caption("Engagement")
+            st.write(engagement)
+
+        with col2:
+            st.caption("Evidence ID")
+            st.write(evidence_id)
+
+        with col3:
+            st.caption("Status")
+            if st.session_state.get("selected_evidence") == evidence_id:
+                st.success("Selected A")
+            elif st.session_state.get("selected_evidence_2") == evidence_id:
+                st.info("Selected B")
+            else:
+                st.write("Ready")
+
+        action_col1, action_col2, action_col3 = st.columns(3)
+
+        with action_col1:
+            if st.button(
+                "Open Detail",
+                key=f"explorer_open_{evidence_id}",
+                use_container_width=True,
+            ):
+                _select_evidence_a(evidence_id)
+                st.rerun()
+
+        with action_col2:
+            if st.button(
+                "Compare A",
+                key=f"explorer_compare_a_{evidence_id}",
+                use_container_width=True,
+            ):
+                _select_evidence_a(evidence_id)
+                st.rerun()
+
+        with action_col3:
+            if st.button(
+                "Compare B",
+                key=f"explorer_compare_b_{evidence_id}",
+                use_container_width=True,
+            ):
+                _select_evidence_b(evidence_id)
+                st.rerun()
+
+
+def _render_evidence_detail(evidence_items):
+    st.markdown("### Evidence Detail")
+
+    selected_id = st.session_state.get("selected_evidence")
+
+    if not selected_id:
+        st.info("隢?撌血 Evidence List ?豢?銝????)
+        return
+
+    evidence = _find_evidence(evidence_items, selected_id)
+
+    if not evidence:
+        st.warning("?曆??啁??? Evidence??)
+        return
+
+    title = _format_value(_safe_get(evidence, "title", "Untitled Evidence"))
+    content = _format_value(_safe_get(evidence, "content", "No content available."))
+    platform = _format_value(_safe_get(evidence, "platform", "Unknown"))
+    topic = _format_value(_safe_get(evidence, "topic", "Unknown"))
+    sentiment = _format_value(_safe_get(evidence, "sentiment", "Unknown"))
+    engagement = _safe_number(_safe_get(evidence, "engagement", 0))
+
+    with st.container(border=True):
+        st.markdown(f"#### {title}")
+        st.caption(f"{platform} 繚 {topic} 繚 {sentiment}")
+
+        metric_col1, metric_col2, metric_col3 = st.columns(3)
+
+        with metric_col1:
+            st.caption("Platform")
+            st.write(platform)
+
+        with metric_col2:
+            st.caption("Topic")
+            st.write(topic)
+
+        with metric_col3:
+            st.caption("Engagement")
+            st.write(engagement)
+
+        st.markdown("##### Content")
+        st.write(content)
+
+        action_col1, action_col2 = st.columns(2)
+
+        with action_col1:
+            if st.button("Set as Compare B", use_container_width=True):
+                _select_evidence_b(_get_evidence_id(evidence))
+                st.rerun()
+
+        with action_col2:
+            if st.button("Clear Selection", use_container_width=True):
+                st.session_state["selected_evidence"] = None
+                st.rerun()
+
+        with st.expander("Raw Evidence Data"):
+            st.json(_to_dict(evidence))
+
+
+def _select_evidence_a(evidence_id):
+    st.session_state["selected_evidence"] = evidence_id
+
+    history = st.session_state.get("selection_history", [])
+    history.append(evidence_id)
+    st.session_state["selection_history"] = history[-20:]
+
+
+def _select_evidence_b(evidence_id):
+    st.session_state["selected_evidence_2"] = evidence_id
+
+    history = st.session_state.get("compare_history", [])
+    history.append(evidence_id)
+    st.session_state["compare_history"] = history[-20:]
+
+
+def _find_evidence(evidence_items, evidence_id):
+    if evidence_id is None:
+        return None
+
+    evidence_id = str(evidence_id)
+
+    for item in evidence_items:
+        if _get_evidence_id(item) == evidence_id:
+            return item
+
+    return None
+
+
+def _get_evidence_id(item):
+    evidence_id = _safe_get(item, "evidence_id", None)
+
+    if evidence_id is None:
+        evidence_id = _safe_get(item, "id", None)
+
+    if evidence_id is None:
+        evidence_id = _safe_get(item, "title", "unknown_evidence")
+
+    return str(evidence_id)
+
+
+def _safe_get(item, key, default=None):
+    if isinstance(item, dict):
+        return item.get(key, default)
+
+    return getattr(item, key, default)
+
+
+def _safe_number(value):
+    try:
+        return int(value)
+    except (TypeError, ValueError):
+        return 0
+
+
+def _format_value(value):
+    if value is None:
+        return "Unknown"
+
+    if hasattr(value, "value"):
+        return str(value.value)
+
+    return str(value)
+
+
+def _to_dict(item):
+    if isinstance(item, dict):
+        return item
+
+    result = {}
+
+    for key in dir(item):
+        if key.startswith("_"):
+            continue
+
+        value = getattr(item, key)
+
+        if callable(value):
+            continue
+
+        result[key] = _format_value(value)
+
+    return result
+import streamlit as st
+
+from modules.evidence_center.domain import EvidenceItem
+
+
+def _format_value(value):
+    """
+    撠?Enum / 銝?祆?摮??刻???Ｗ霈摮葡??
+    """
+
+    if value is None:
+        return "Unknown"
+
+    if hasattr(value, "value"):
+        return value.value
+
+    return str(value)
+
+
+def render_platform_filter(
+    evidence_items: list[EvidenceItem],
+) -> str:
+    """
+    Platform Filter Component
+
+    Presentation Layer ?辣??
+
+    鞎痊嚗?
+    - 靘?桀? Evidence 鞈??Ｙ?撟喳?賊?
+    - ?雿輻???撟喳
+
+    銝?鞎穿?
+    - ?亥岷鞈?
+    - 靽格 Investigation State
+    - 蝭拚 Evidence
+    """
+
+    platforms = sorted({_format_value(item.platform) for item in evidence_items})
+    options = ["All"] + platforms
+
+    selected_platform = st.selectbox(
+        "Platform",
+        options,
+        index=0,
+        help="靘?祇?靘?撟喳蝭拚 Evidence??,
+    )
+
+    return selected_platform
+import streamlit as st
+
+from modules.evidence_center.intelligence.service import (
+    create_enterprise_intelligence_service,
+)
+from modules.evidence_center.intelligence.workspace.hub_panels import (
+    render_hub_overview_panel,
+    render_hub_summary_panel,
+    render_hub_signals_panel,
+    render_hub_runtime_context_panel,
+    render_hub_architecture_panel,
+)
+
+
+def render_enterprise_intelligence_hub(
+    evidence_runtime=None,
+    canvas_runtime=None,
+    canvas_intelligence_runtime=None,
+    observability_service=None,
+):
+    """
+    Enterprise Intelligence Hub Workspace
+
+    Sprint D ??Enterprise Intelligence Layer ?亙??
+
+    瘜冽?嚗?
+    ????Dashboard??
+    ??芯? Executive Briefing?trategy Planning??
+    Enterprise AI?isk Analysis?pportunity Discovery??
+    Multi-Agent Runtime ?梁??Intelligence Workspace??
+    """
+
+    service = create_enterprise_intelligence_service(
+        evidence_runtime=evidence_runtime,
+        canvas_runtime=canvas_runtime,
+        canvas_intelligence_runtime=canvas_intelligence_runtime,
+        observability_service=observability_service,
+    )
+
+    hub_state = service.get_hub_state()
+
+    st.markdown("# Enterprise Intelligence Hub")
+    st.caption(
+        "Single Enterprise Intelligence Layer for briefing, strategy, AI decisioning, "
+        "risk analysis, opportunity discovery, and agent runtime."
+    )
+
+    render_hub_overview_panel(hub_state)
+
+    tab_summary, tab_signals, tab_runtime, tab_architecture = st.tabs(
+        [
+            "Executive Summary",
+            "Foundation Signals",
+            "Runtime Context",
+            "Architecture",
+        ]
+    )
+
+    with tab_summary:
+        render_hub_summary_panel(hub_state.summary)
+
+    with tab_signals:
+        render_hub_signals_panel(hub_state.signals)
+
+    with tab_runtime:
+        render_hub_runtime_context_panel(hub_state.runtime_context)
+
+    with tab_architecture:
+        render_hub_architecture_panel()
+import streamlit as st
+
+from modules.evidence_center.intelligence.architecture import (
+    get_enterprise_intelligence_architecture,
+)
+from modules.evidence_center.intelligence.models import (
+    EnterpriseIntelligenceHubState,
+    EnterpriseIntelligenceSignal,
+    EnterpriseIntelligenceSummary,
+)
+
+
+def render_hub_overview_panel(hub_state: EnterpriseIntelligenceHubState):
+    """
+    Enterprise Intelligence Hub Overview
+
+    憿舐內 Hub ?像?啁????
+    """
+
+    st.markdown("## Hub Overview")
+
+    col1, col2, col3, col4 = st.columns(4)
+
+    with col1:
+        st.metric("Hub Status", hub_state.status)
+
+    with col2:
+        st.metric("Domains", len(hub_state.domains))
+
+    with col3:
+        st.metric("Signals", len(hub_state.signals))
+
+    with col4:
+        connected_layers = sum(
+            1
+            for layer_state in hub_state.runtime_context.values()
+            if layer_state.get("connected") is True
+        )
+        st.metric("Connected Layers", connected_layers)
+
+    st.info(hub_state.description)
+
+
+def render_hub_summary_panel(summary: EnterpriseIntelligenceSummary):
+    """
+    Executive Summary Foundation Panel
+    """
+
+    st.markdown("## Executive Summary Foundation")
+
+    st.markdown(f"### {summary.title}")
+    st.write(summary.narrative)
+
+    col1, col2 = st.columns(2)
+
+    with col1:
+        st.markdown("#### Key Points")
+        _render_list(summary.key_points, empty_text="No key points available.")
+
+        st.markdown("#### Risks")
+        _render_list(summary.risks, empty_text="No risks available.")
+
+    with col2:
+        st.markdown("#### Opportunities")
+        _render_list(
+            summary.opportunities,
+            empty_text="No opportunities available.",
+        )
+
+        st.markdown("#### Recommended Actions")
+        _render_list(
+            summary.recommended_actions,
+            empty_text="No recommended actions available.",
+        )
+
+
+def render_hub_signals_panel(signals: list[EnterpriseIntelligenceSignal]):
+    """
+    Foundation Signals Panel
+    """
+
+    st.markdown("## Foundation Signals")
+
+    if not signals:
+        st.warning("No enterprise intelligence signals available.")
+        return
+
+    for signal in signals:
+        with st.container(border=True):
+            col1, col2 = st.columns([3, 1])
+
+            with col1:
+                st.markdown(f"### {signal.title}")
+                st.caption(f"{signal.domain.value} 繚 {signal.source}")
+                st.write(signal.description)
+
+            with col2:
+                st.metric("Priority", signal.priority)
+                st.caption(f"Signal ID: {signal.signal_id}")
+
+            if signal.evidence_refs:
+                st.markdown("#### Evidence References")
+                _render_list(signal.evidence_refs)
+
+            if signal.metadata:
+                with st.expander("Metadata"):
+                    st.json(signal.metadata)
+
+
+def render_hub_runtime_context_panel(runtime_context: dict):
+    """
+    Runtime Context Panel
+
+    憿舐內 Enterprise Intelligence Hub ?桀????啣鈭?皜?Runtime??
+    """
+
+    st.markdown("## Runtime Context")
+
+    if not runtime_context:
+        st.warning("No runtime context available.")
+        return
+
+    for layer_name, layer_state in runtime_context.items():
+        connected = layer_state.get("connected") is True
+        status_label = "Connected" if connected else "Not Connected"
+
+        with st.container(border=True):
+            col1, col2 = st.columns([3, 1])
+
+            with col1:
+                st.markdown(f"### {layer_name}")
+                st.caption(status_label)
+
+                runtime_type = layer_state.get("runtime_type")
+                if runtime_type:
+                    st.write(f"Runtime Type: `{runtime_type}`")
+
+            with col2:
+                st.metric("Status", status_label)
+
+            available_methods = layer_state.get("available_methods", [])
+            missing_methods = layer_state.get("missing_methods", [])
+
+            method_col1, method_col2 = st.columns(2)
+
+            with method_col1:
+                st.markdown("#### Available Methods")
+                _render_list(
+                    available_methods,
+                    empty_text="No available methods detected.",
+                )
+
+            with method_col2:
+                st.markdown("#### Missing Methods")
+                _render_list(
+                    missing_methods,
+                    empty_text="No missing methods.",
+                )
+
+
+def render_hub_architecture_panel():
+    """
+    Architecture Panel
+    """
+
+    architecture = get_enterprise_intelligence_architecture()
+
+    st.markdown("## Architecture Map")
+
+    st.markdown(f"### {architecture.get('layer')}")
+    st.caption(
+        f"{architecture.get('sprint')} 繚 {architecture.get('step')} 繚 "
+        f"{architecture.get('status')}"
+    )
+
+    st.write(architecture.get("purpose"))
+
+    st.markdown("#### Platform Position")
+    _render_list(architecture.get("position", []))
+
+    st.markdown("#### Modules")
+    modules = architecture.get("modules", {})
+    if modules:
+        for module_name, description in modules.items():
+            st.markdown(f"- `{module_name}`嚗description}")
+    else:
+        st.caption("No module map available.")
+
+    col1, col2 = st.columns(2)
+
+    with col1:
+        st.markdown("#### Upstream Dependencies")
+        _render_list(architecture.get("upstream_dependencies", []))
+
+        st.markdown("#### Principles")
+        _render_list(architecture.get("principles", []))
+
+    with col2:
+        st.markdown("#### Future Capabilities")
+        _render_list(architecture.get("future_capabilities", []))
+
+
+def _render_list(items, empty_text="No items available."):
+    if not items:
+        st.caption(empty_text)
+        return
+
+    for item in items:
+        st.markdown(f"- {item}")

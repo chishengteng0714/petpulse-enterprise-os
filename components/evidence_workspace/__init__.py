@@ -1,0 +1,1 @@
+from components.evidence_workspace.workspace import render_evidence_workspace
