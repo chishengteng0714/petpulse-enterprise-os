@@ -59,6 +59,7 @@ def main() -> None:
 
     service = EvidenceService()
     evidence_items = _get_evidence_items(service)
+    kpi_summary = _get_kpi_summary(service, evidence_items)
 
     render_shared_sidebar_brand_and_navigation(
         active_page="evidence",
@@ -68,7 +69,7 @@ def main() -> None:
     )
 
     _render_update_control(evidence_items)
-    _render_evidence_header(evidence_items)
+    _render_evidence_header(evidence_items, kpi_summary)
     filtered_items = _render_filter_bar(evidence_items)
     _render_result_header(filtered_items)
     _render_evidence_results(filtered_items)
@@ -119,6 +120,50 @@ def _normalise_items(value: Any) -> list[Any]:
         return list(value)
     except TypeError:
         return []
+
+
+def _get_kpi_summary(
+    service: EvidenceService,
+    evidence_items: list[Any],
+) -> dict[str, Any]:
+    method = getattr(service, "get_kpi_summary", None)
+
+    if callable(method):
+        try:
+            result = method()
+            if isinstance(result, dict):
+                summary = dict(result)
+                summary["platforms"] = _platform_count(evidence_items)
+                return summary
+        except Exception:
+            pass
+
+    fallback = _summarise(evidence_items)
+    return {
+        "brand_health": 0,
+        "brand_signal_count": fallback["total"],
+        "evidence_count": fallback["total"],
+        "high_risk_count": fallback["high_risk"],
+        "brand_confidence_average": fallback["average_confidence"],
+        "data_quality": "待確認",
+        "positive": fallback["positive"],
+        "neutral": max(
+            0,
+            fallback["total"] - fallback["positive"] - fallback["negative"],
+        ),
+        "negative": fallback["negative"],
+        "platforms": fallback["platforms"],
+    }
+
+
+def _platform_count(evidence_items: list[Any]) -> int:
+    return len(
+        {
+            _text(_get(item, "platform"), "")
+            for item in evidence_items
+            if _text(_get(item, "platform"), "")
+        }
+    )
 
 
 def _render_update_control(evidence_items: list[Any]) -> None:
@@ -185,8 +230,25 @@ def _run_update() -> None:
     st.rerun()
 
 
-def _render_evidence_header(evidence_items: list[Any]) -> None:
-    summary = _summarise(evidence_items)
+def _render_evidence_header(
+    evidence_items: list[Any],
+    summary: dict[str, Any],
+) -> None:
+    total = _safe_int(
+        summary.get(
+            "brand_signal_count",
+            summary.get("evidence_count", len(evidence_items)),
+        )
+    )
+    average_confidence = _safe_float(
+        summary.get("brand_confidence_average", 0)
+    )
+    positive = _safe_int(summary.get("positive", 0))
+    negative = _safe_int(summary.get("negative", 0))
+    high_risk = _safe_int(summary.get("high_risk_count", 0))
+    platforms = _safe_int(
+        summary.get("platforms", _platform_count(evidence_items))
+    )
 
     html = f"""
 <div class="pp4-evidence-page">
@@ -196,16 +258,16 @@ def _render_evidence_header(evidence_items: list[Any]) -> None:
 <h1>證據中心</h1>
 <p>集中檢視品牌訊號、AI 判讀與建議行動。每筆證據保留原始來源。</p>
 <div class="pp4-evidence-meta">
-<span class="pp4-tag">有效訊號 {summary["total"]}</span>
-<span class="pp4-tag">平均可信度 {summary["average_confidence"]}%</span>
-<span class="pp4-tag">平台 {summary["platforms"]}</span>
+<span class="pp4-tag">有效訊號 {total}</span>
+<span class="pp4-tag">平均可信度 {average_confidence:.0f}%</span>
+<span class="pp4-tag">平台 {platforms}</span>
 </div>
 </div>
 <aside class="pp4-evidence-kpis">
-<div class="pp4-evidence-kpi"><span>有效訊號</span><strong>{summary["total"]}</strong></div>
-<div class="pp4-evidence-kpi"><span>正向</span><strong>{summary["positive"]}</strong></div>
-<div class="pp4-evidence-kpi"><span>負向</span><strong>{summary["negative"]}</strong></div>
-<div class="pp4-evidence-kpi"><span>高風險</span><strong>{summary["high_risk"]}</strong></div>
+<div class="pp4-evidence-kpi"><span>有效訊號</span><strong>{total}</strong></div>
+<div class="pp4-evidence-kpi"><span>正向</span><strong>{positive}</strong></div>
+<div class="pp4-evidence-kpi"><span>負向</span><strong>{negative}</strong></div>
+<div class="pp4-evidence-kpi"><span>高風險</span><strong>{high_risk}</strong></div>
 </aside>
 </section>
 </div>
@@ -613,6 +675,20 @@ def _text(value: Any, fallback: str = "") -> str:
         return fallback
     text = str(value).strip()
     return text or fallback
+
+
+def _safe_int(value: Any, fallback: int = 0) -> int:
+    try:
+        return int(float(value))
+    except (TypeError, ValueError):
+        return fallback
+
+
+def _safe_float(value: Any, fallback: float = 0.0) -> float:
+    try:
+        return float(value)
+    except (TypeError, ValueError):
+        return fallback
 
 
 def _compact_html(markup: str) -> str:
