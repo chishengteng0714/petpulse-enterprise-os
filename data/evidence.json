@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-07-17T09:35:13.748873+00:00",
+  "generated_at": "2026-07-17T14:37:31.134252+00:00",
   "source": "Google News RSS",
   "query": "\"寵物公園\" OR \"PetPark\"",
   "evidence_items": [
@@ -88,6 +88,18 @@
       "original_url": "https://news.google.com/rss/articles/CBMiUkFVX3lxTE9CWlVyMHVPSl82eUtvRloyeFVpYXpta1cxRlpQNlM4LXYxZTNxOTQ3aXdiazM0cFlVNW1qZDkyS0N5WjJPRGV0VmdnM0NsWm1Famc?oc=5"
     },
     {
+      "evidence_id": "news_439a675f3ef8ab5b",
+      "platform": "News",
+      "author": "蕃新聞",
+      "content": "端午連假帶毛孩「放粽」趣 嘉市兩座寵物公園陪毛孩開心放電 - 蕃新聞",
+      "ai_summary": "端午連假帶毛孩「放粽」趣 嘉市兩座寵物公園陪毛孩開心放電 蕃新聞",
+      "topic": "品牌新聞",
+      "sentiment": "Neutral",
+      "published_time": "2026-06-19 15:00",
+      "engagement": 0,
+      "original_url": "https://news.google.com/rss/articles/CBMiUkFVX3lxTE96aFdpT2tYNDVfR0xDS3FubE5JWDU2TUI1Q3dNaUZ2cXhmMnk5UTN0ZnlBZjY1LXcyWXBFLThGUExQenRHa0RnZEZqZmdfTDdLTmc?oc=5"
+    },
+    {
       "evidence_id": "news_3741918b9282f599",
       "platform": "News",
       "author": "chiayi.gov.tw",
@@ -110,18 +122,6 @@
       "published_time": "2026-06-18 15:00",
       "engagement": 0,
       "original_url": "https://news.google.com/rss/articles/CBMiXkFVX3lxTE9TRDZBN2llOHdjVFhGdVRvdzZoOGh5OWVlbmZxRkxIWlBrelAxWndaTWZ4YU9jYTl1WnNFckVob3NtWmMzQlFHa3RpZVR4eU1iaVViVWc5WVFXYVdEN0E?oc=5"
-    },
-    {
-      "evidence_id": "news_97489fd7ec33b062",
-      "platform": "News",
-      "author": "元丰傳媒",
-      "content": "新竹香山狗狗即將擁有專屬綠地 高虹安：「一區一寵物公園」年底達標 - 元丰傳媒",
-      "ai_summary": "新竹香山狗狗即將擁有專屬綠地 高虹安：「一區一寵物公園」年底達標 元丰傳媒",
-      "topic": "品牌新聞",
-      "sentiment": "Neutral",
-      "published_time": "2026-06-17 15:00",
-      "engagement": 0,
-      "original_url": "https://news.google.com/rss/articles/CBMibkFVX3lxTE00RFJERDFkdlJWc0pUcngxMEQ4c1BNc0ozSHVIMURvdXhRcmNfTU1tNDhwWlducjR1TnVKSWY1SWhLbXhjZUh4clFTUGpkV25yUVRJTzk4ZU5KOFJJWk1iemxUWHB0cTVRMGJOdFhB?oc=5"
     },
     {
       "evidence_id": "news_46ff118ed0598af4",
