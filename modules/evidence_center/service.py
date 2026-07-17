@@ -11,10 +11,17 @@ if TYPE_CHECKING:
     from modules.evidence_center.investigation_state import InvestigationState
 
 
-ANALYSIS_PATH = (
-    Path(__file__).resolve().parents[3]
-    / "data"
-    / "analysis.json"
+SERVICE_FILE = Path(__file__).resolve()
+
+ANALYSIS_PATHS = (
+    # Streamlit Cloud / GitHub?app.py ? data ???????
+    SERVICE_FILE.parents[2] / "data" / "analysis.json",
+
+    # ???????AI-Social-Listening/data/analysis.json
+    SERVICE_FILE.parents[3] / "data" / "analysis.json",
+
+    # ????????
+    Path.cwd() / "data" / "analysis.json",
 )
 
 
@@ -355,32 +362,28 @@ class EvidenceService:
         找不到、格式錯誤或內容不是 JSON 物件時，
         回傳空字典，不回退到 Crawler。
         """
-        if not ANALYSIS_PATH.exists():
-            return {}
+        for analysis_path in ANALYSIS_PATHS:
+            if not analysis_path.exists():
+                continue
 
-        try:
-            with open(
-                ANALYSIS_PATH,
-                "r",
-                encoding="utf-8",
-            ) as file:
-                data = json.load(
-                    file
-                )
-        except (
-            OSError,
-            UnicodeDecodeError,
-            json.JSONDecodeError,
-        ):
-            return {}
+            try:
+                with open(
+                    analysis_path,
+                    "r",
+                    encoding="utf-8",
+                ) as file:
+                    data = json.load(file)
+            except (
+                OSError,
+                UnicodeDecodeError,
+                json.JSONDecodeError,
+            ):
+                continue
 
-        if not isinstance(
-            data,
-            dict,
-        ):
-            return {}
+            if isinstance(data, dict):
+                return data
 
-        return data
+        return {}
 
     def _load_analyzed_evidence(self):
         """
