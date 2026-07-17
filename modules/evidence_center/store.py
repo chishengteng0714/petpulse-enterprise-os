@@ -1,115 +1,227 @@
+import json
+from pathlib import Path
+from typing import Any
+
 from modules.evidence_center.domain import EvidenceItem
+
+
+DATA_FILE = (
+    Path(__file__).resolve().parents[2]
+    / "data"
+    / "evidence.json"
+)
 
 
 def get_mock_evidence_items() -> list[EvidenceItem]:
     """
-    Evidence Center Mock Store
+    Evidence Center 資料入口。
 
-    提供 Evidence Center Golden Master 展示用資料。
-
-    GM-06 Final Product Audit：
-    - 不新增功能
-    - 不改變 Architecture
-    - 保留既有 Mock Store 責任
-    - 對齊 EvidenceItem schema
-    - 清除 GM-05 Demo Audit 殘留說明
+    執行原則：
+    1. 優先讀取 data/evidence.json 的真實資料。
+    2. 資料檔不存在、格式錯誤或內容為空時，回傳空清單。
+    3. 不再提供 example-post 類型的示範來源網址。
     """
 
-    return [
-        EvidenceItem(
-            evidence_id="ev_fb_001",
-            platform="Facebook",
-            author="寵物社團使用者",
-            content="最近很多人討論狗狗腸胃敏感，尤其換飼料後軟便的狀況變多。",
-            ai_summary="Facebook 社團出現飼料轉換與腸胃敏感相關討論。",
-            topic="腸胃敏感",
-            sentiment="Negative",
-            published_time="2026-07-03 09:20",
-            engagement=128,
-            original_url="https://facebook.com/example-post",
+    return load_evidence_items()
+
+
+def load_evidence_items() -> list[EvidenceItem]:
+    """
+    從 JSON 資料檔載入 EvidenceItem。
+    """
+
+    if not DATA_FILE.exists():
+        return []
+
+    try:
+        raw_content = DATA_FILE.read_text(encoding="utf-8-sig")
+        payload = json.loads(raw_content)
+    except (OSError, UnicodeError, json.JSONDecodeError):
+        return []
+
+    records = _extract_records(payload)
+    evidence_items: list[EvidenceItem] = []
+
+    for record in records:
+        item = _build_evidence_item(record)
+
+        if item is not None:
+            evidence_items.append(item)
+
+    return evidence_items
+
+
+def _extract_records(payload: Any) -> list[dict]:
+    """
+    支援以下兩種 JSON 格式：
+
+    1. 直接陣列
+       [
+           {...},
+           {...}
+       ]
+
+    2. evidence_items 容器
+       {
+           "evidence_items": [
+               {...},
+               {...}
+           ]
+       }
+    """
+
+    if isinstance(payload, list):
+        return [
+            record
+            for record in payload
+            if isinstance(record, dict)
+        ]
+
+    if isinstance(payload, dict):
+        records = payload.get("evidence_items", [])
+
+        if isinstance(records, list):
+            return [
+                record
+                for record in records
+                if isinstance(record, dict)
+            ]
+
+    return []
+
+
+def _build_evidence_item(
+    record: dict,
+) -> EvidenceItem | None:
+    """
+    將 JSON 紀錄轉換為 EvidenceItem。
+
+    缺少必要欄位或網址不是正式 HTTP/HTTPS 網址時，
+    該筆資料會被略過，避免 Evidence Center 出現失效來源。
+    """
+
+    evidence_id = _clean_text(record.get("evidence_id"))
+    content = _clean_text(record.get("content"))
+    original_url = _clean_text(record.get("original_url"))
+
+    if not evidence_id:
+        return None
+
+    if not content:
+        return None
+
+    if not _is_valid_source_url(original_url):
+        return None
+
+    platform = _normalize_platform(record.get("platform"))
+    sentiment = _normalize_sentiment(record.get("sentiment"))
+
+    try:
+        engagement = max(
+            0,
+            int(record.get("engagement", 0)),
+        )
+    except (TypeError, ValueError):
+        engagement = 0
+
+    return EvidenceItem(
+        evidence_id=evidence_id,
+        platform=platform,
+        author=_clean_text(record.get("author")) or "未知來源",
+        content=content,
+        ai_summary=(
+            _clean_text(record.get("ai_summary"))
+            or content
         ),
-        EvidenceItem(
-            evidence_id="ev_ig_001",
-            platform="Instagram",
-            author="pet_lifestyle_tw",
-            content="分享一款外出攜帶方便的寵物保健品，很多飼主留言詢問成分。",
-            ai_summary="Instagram 內容顯示保健品攜帶便利性受到關注。",
-            topic="寵物保健品",
-            sentiment="Positive",
-            published_time="2026-07-03 10:45",
-            engagement=356,
-            original_url="https://instagram.com/example-post",
+        topic=_clean_text(record.get("topic")) or "未分類",
+        sentiment=sentiment,
+        published_time=(
+            _clean_text(record.get("published_time"))
+            or ""
         ),
-        EvidenceItem(
-            evidence_id="ev_threads_001",
-            platform="Threads",
-            author="毛孩生活觀察",
-            content="最近看到不少人分享毛孩保健品日常，大家比較在意成分透明跟吃起來方不方便。",
-            ai_summary="Threads 討論顯示成分透明與使用便利性是保健品關注重點。",
-            topic="成分透明",
-            sentiment="Positive",
-            published_time="2026-07-03 12:05",
-            engagement=214,
-            original_url="https://threads.net/example-post",
-        ),
-        EvidenceItem(
-            evidence_id="ev_dcard_001",
-            platform="Dcard",
-            author="寵物版使用者",
-            content="家裡老狗最近開始吃關節保健，想問有沒有比較不會踩雷、價格也合理的品牌。",
-            ai_summary="Dcard 使用者對高齡犬關節保健品有價格與品牌信任需求。",
-            topic="高齡犬照護",
-            sentiment="Neutral",
-            published_time="2026-07-03 13:30",
-            engagement=87,
-            original_url="https://dcard.tw/example-post",
-        ),
-        EvidenceItem(
-            evidence_id="ev_forum_001",
-            platform="Forum",
-            author="寵物用品討論使用者",
-            content="這次比較幾款寵物營養補充品，大家最常問的是成分來源與適口性。",
-            ai_summary="論壇討論顯示成分來源與適口性是高互動討論重點。",
-            topic="產品開箱",
-            sentiment="Positive",
-            published_time="2026-07-03 14:10",
-            engagement=492,
-            original_url="https://forum.example.com/example-thread",
-        ),
-        EvidenceItem(
-            evidence_id="ev_forum_002",
-            platform="Forum",
-            author="討論區使用者",
-            content="想找寵物保健品長期吃的心得，有沒有品牌穩定、價格不要太高的選擇？",
-            ai_summary="論壇討論顯示消費者重視長期使用心得、品牌穩定度與價格合理性。",
-            topic="品牌信任",
-            sentiment="Neutral",
-            published_time="2026-07-03 15:25",
-            engagement=63,
-            original_url="https://forum.example.com/example-review",
-        ),
-        EvidenceItem(
-            evidence_id="ev_ptt_001",
-            platform="PTT",
-            author="匿名使用者",
-            content="有沒有推薦比較適合高齡犬的關節保健品牌？價格不要太誇張。",
-            ai_summary="PTT 使用者對高齡犬關節保健品有明確需求。",
-            topic="高齡犬照護",
-            sentiment="Neutral",
-            published_time="2026-07-03 11:10",
-            engagement=42,
-            original_url="https://ptt.cc/example-post",
-        ),
-        EvidenceItem(
-            evidence_id="ev_review_001",
-            platform="Google Review",
-            author="門市顧客",
-            content="店員很親切，也會提醒不同年齡狗狗適合的營養補充品。",
-            ai_summary="Google Review 顯示門市服務與營養建議形成正面體驗。",
-            topic="門市服務",
-            sentiment="Positive",
-            published_time="2026-07-02 18:30",
-            engagement=5,
-            original_url="https://google.com/maps/example-review",
-        ),
-    ]
+        engagement=engagement,
+        original_url=original_url,
+    )
+
+
+def _clean_text(value: Any) -> str:
+    """
+    將欄位轉為乾淨字串。
+    """
+
+    if value is None:
+        return ""
+
+    return str(value).strip()
+
+
+def _is_valid_source_url(url: str) -> bool:
+    """
+    只允許正式 HTTP 或 HTTPS 來源網址，
+    並排除舊版 example 示範網址。
+    """
+
+    normalized = url.lower()
+
+    if not normalized.startswith(
+        ("https://", "http://")
+    ):
+        return False
+
+    blocked_patterns = (
+        "example-post",
+        "example-thread",
+        "example-review",
+        "example.com",
+    )
+
+    return not any(
+        pattern in normalized
+        for pattern in blocked_patterns
+    )
+
+
+def _normalize_platform(value: Any) -> str:
+    """
+    將來源平台限制在 EvidencePlatform 支援範圍。
+    """
+
+    platform = _clean_text(value)
+
+    allowed_platforms = {
+        "Facebook",
+        "Instagram",
+        "Threads",
+        "PTT",
+        "Dcard",
+        "Forum",
+        "Google Review",
+        "News",
+        "Blog",
+    }
+
+    if platform in allowed_platforms:
+        return platform
+
+    return "News"
+
+
+def _normalize_sentiment(value: Any) -> str:
+    """
+    將情緒值限制在 EvidenceSentiment 支援範圍。
+    """
+
+    sentiment = _clean_text(value)
+
+    allowed_sentiments = {
+        "Positive",
+        "Neutral",
+        "Negative",
+        "Mixed",
+        "Unknown",
+    }
+
+    if sentiment in allowed_sentiments:
+        return sentiment
+
+    return "Unknown"

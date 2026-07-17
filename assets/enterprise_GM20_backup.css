@@ -1,0 +1,2057 @@
+/* ==========================================================================
+   PetPulse Enterprise OS v1.2 Executive Edition
+   GM-15 Enterprise Luxury Polish · Final Demo
+   Presentation Layer Only
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   01. Brand Tokens
+   -------------------------------------------------------------------------- */
+
+:root {
+    --pp-brand-green: #7BAA3C;
+    --pp-brand-green-hover: #6B982F;
+    --pp-brand-green-deep: #557D27;
+    --pp-brand-green-soft: #EEF5E5;
+    --pp-brand-green-mist: #F7FAF2;
+
+    --pp-dark-green: #003E33;
+    --pp-dark-green-2: #0A5145;
+    --pp-dark-green-soft: #E7F0ED;
+
+    --pp-brand-gold: #D8B76A;
+    --pp-brand-yellow: #F5C62A;
+    --pp-brand-yellow-soft: #FFF7D7;
+
+    --pp-canvas: #F3F0E7;
+    --pp-canvas-deep: #ECE7DC;
+    --pp-surface: #FFFEFB;
+    --pp-surface-soft: #F8F5EE;
+    --pp-surface-green: #EFF5E8;
+    --pp-surface-gold: #FBF5E6;
+
+    --pp-text-strong: #143129;
+    --pp-text: #2E443C;
+    --pp-text-muted: #6A7B74;
+    --pp-text-faint: #93A09A;
+    --pp-text-inverse: #FFFFFF;
+
+    --pp-success: #43814F;
+    --pp-success-soft: #EDF7EF;
+    --pp-warning: #9B6A14;
+    --pp-warning-soft: #FFF5D8;
+    --pp-danger: #A3473F;
+    --pp-danger-soft: #FCECE9;
+    --pp-info: #456F7A;
+    --pp-info-soft: #EDF4F6;
+
+    --pp-border: rgba(0, 62, 51, 0.09);
+    --pp-border-strong: rgba(0, 62, 51, 0.16);
+    --pp-border-brand: rgba(123, 170, 60, 0.34);
+    --pp-border-gold: rgba(216, 183, 106, 0.36);
+
+    --pp-radius-xs: 10px;
+    --pp-radius-sm: 14px;
+    --pp-radius-md: 18px;
+    --pp-radius-lg: 24px;
+    --pp-radius-xl: 34px;
+    --pp-radius-hero: 48px 48px 48px 18px;
+    --pp-radius-organic: 30px 30px 30px 12px;
+    --pp-radius-pill: 999px;
+
+    --pp-shadow-xs:
+        0 2px 5px rgba(0, 48, 39, 0.025),
+        0 8px 22px rgba(0, 48, 39, 0.035);
+
+    --pp-shadow-sm:
+        0 8px 24px rgba(0, 48, 39, 0.045),
+        0 20px 46px rgba(0, 48, 39, 0.055);
+
+    --pp-shadow-md:
+        0 16px 40px rgba(0, 48, 39, 0.07),
+        0 34px 76px rgba(0, 48, 39, 0.075);
+
+    --pp-shadow-hover:
+        0 18px 42px rgba(0, 48, 39, 0.08),
+        0 36px 88px rgba(0, 48, 39, 0.08);
+
+    --pp-display: clamp(2.8rem, 5.6vw, 5.6rem);
+    --pp-h1: clamp(2.2rem, 4vw, 4rem);
+    --pp-h2: clamp(1.75rem, 2.8vw, 2.8rem);
+    --pp-h3: clamp(1.2rem, 1.8vw, 1.55rem);
+    --pp-body-lg: 1.08rem;
+    --pp-body: 0.96rem;
+    --pp-caption: 0.78rem;
+    --pp-label: 0.72rem;
+
+    --pp-fast: 150ms;
+    --pp-normal: 240ms;
+    --pp-slow: 420ms;
+    --pp-ease: cubic-bezier(0.2, 0.75, 0.2, 1);
+}
+
+/* --------------------------------------------------------------------------
+   02. Global Foundation
+   -------------------------------------------------------------------------- */
+
+html {
+    scroll-behavior: smooth;
+}
+
+html,
+body,
+[data-testid="stAppViewContainer"],
+.stApp {
+    color: var(--pp-text) !important;
+    font-family:
+        "Noto Sans TC",
+        "PingFang TC",
+        "Microsoft JhengHei",
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        sans-serif !important;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+}
+
+body,
+[data-testid="stAppViewContainer"],
+.stApp {
+    background:
+        linear-gradient(
+            180deg,
+            #F7F4EC 0%,
+            #F1EDE3 46%,
+            #F5F2EA 100%
+        ) !important;
+}
+
+[data-testid="stAppViewContainer"] {
+    position: relative;
+    min-height: 100vh;
+    isolation: isolate;
+}
+
+[data-testid="stAppViewContainer"]::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    background:
+        radial-gradient(circle at 9% 4%, rgba(123, 170, 60, 0.13), transparent 24%),
+        radial-gradient(circle at 92% 7%, rgba(216, 183, 106, 0.11), transparent 20%),
+        radial-gradient(circle at 82% 94%, rgba(123, 170, 60, 0.045), transparent 24%);
+}
+
+[data-testid="stMainBlockContainer"] {
+    position: relative;
+    z-index: 1;
+}
+
+.block-container {
+    max-width: 1380px;
+    padding: 2rem 3rem 6rem;
+}
+
+[data-testid="stVerticalBlock"] {
+    gap: 0.9rem;
+}
+
+[data-testid="stHorizontalBlock"] {
+    gap: 1rem;
+}
+
+[data-testid="stHeader"] {
+    background: rgba(247, 244, 236, 0.78) !important;
+    backdrop-filter: blur(20px) saturate(135%);
+    border-bottom: 1px solid rgba(0, 62, 51, 0.04);
+}
+
+[data-testid="stDecoration"] {
+    display: none;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    color: var(--pp-text-strong) !important;
+    font-weight: 800 !important;
+    letter-spacing: -0.04em !important;
+}
+
+h1 {
+    font-size: var(--pp-h1) !important;
+    line-height: 1.04 !important;
+}
+
+h2 {
+    font-size: var(--pp-h2) !important;
+    line-height: 1.12 !important;
+}
+
+h3 {
+    font-size: var(--pp-h3) !important;
+    line-height: 1.3 !important;
+}
+
+p {
+    line-height: 1.8;
+}
+
+a {
+    color: var(--pp-dark-green);
+    text-decoration-color: rgba(0, 62, 51, 0.24);
+    text-underline-offset: 0.2em;
+}
+
+a:hover {
+    color: var(--pp-brand-green-deep);
+    text-decoration-color: var(--pp-brand-green);
+}
+
+::selection {
+    color: var(--pp-dark-green);
+    background: rgba(123, 170, 60, 0.22);
+}
+
+hr {
+    height: 1px !important;
+    border: 0 !important;
+    background: rgba(0, 62, 51, 0.10) !important;
+}
+
+/* --------------------------------------------------------------------------
+   03. Sidebar · Official PetPark CI
+   -------------------------------------------------------------------------- */
+
+section[data-testid="stSidebar"],
+[data-testid="stSidebar"] {
+    height: 100vh !important;
+    max-height: 100vh !important;
+    overflow: hidden !important;
+    background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.00) 22%),
+        radial-gradient(circle at 10% 0%, rgba(255, 255, 255, 0.24), transparent 26%),
+        radial-gradient(circle at 100% 86%, rgba(0, 62, 51, 0.16), transparent 38%),
+        linear-gradient(
+            180deg,
+            #82B744 0%,
+            #79A93D 45%,
+            #6D9834 100%
+        ) !important;
+    border-right: 1px solid rgba(255, 255, 255, 0.26) !important;
+    box-shadow:
+        inset -1px 0 0 rgba(255, 255, 255, 0.12),
+        14px 0 36px rgba(0, 62, 51, 0.14),
+        28px 0 90px rgba(0, 62, 51, 0.08) !important;
+}
+
+section[data-testid="stSidebar"] > div {
+    height: 100vh !important;
+    max-height: 100vh !important;
+}
+
+[data-testid="stSidebarContent"] {
+    height: 100vh !important;
+    max-height: 100vh !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    padding-top: 0.3rem;
+    padding-bottom: 5rem !important;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 255, 255, 0.58) rgba(255, 255, 255, 0.08);
+}
+
+[data-testid="stSidebarContent"]::-webkit-scrollbar {
+    width: 7px;
+}
+
+[data-testid="stSidebarContent"]::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.08);
+}
+
+[data-testid="stSidebarContent"]::-webkit-scrollbar-thumb {
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.52);
+}
+
+[data-testid="stSidebarContent"]::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.72);
+}
+
+[data-testid="stSidebar"] [data-testid="stVerticalBlock"] {
+    min-height: max-content !important;
+}
+
+[data-testid="stSidebar"] p,
+[data-testid="stSidebar"] span,
+[data-testid="stSidebar"] label,
+[data-testid="stSidebar"] h1,
+[data-testid="stSidebar"] h2,
+[data-testid="stSidebar"] h3,
+[data-testid="stSidebar"] h4,
+[data-testid="stSidebar"] strong {
+    color: rgba(255, 255, 255, 0.96) !important;
+}
+
+[data-testid="stSidebar"] small,
+[data-testid="stSidebar"] .stCaption,
+[data-testid="stSidebar"] [data-testid="stCaptionContainer"] p {
+    color: rgba(255, 255, 255, 0.74) !important;
+}
+
+[data-testid="stSidebar"] hr {
+    background: rgba(255, 255, 255, 0.22) !important;
+}
+
+[data-testid="stSidebarNav"] {
+    padding-top: 0.35rem;
+}
+
+[data-testid="stSidebarNav"] ul {
+    gap: 0.3rem;
+}
+
+[data-testid="stSidebarNav"] a {
+    position: relative;
+    min-height: 50px !important;
+    margin-bottom: 0.35rem !important;
+    padding: 0.74rem 0.92rem !important;
+    border: 1px solid transparent !important;
+    border-radius: 16px !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    transition:
+        transform var(--pp-fast) var(--pp-ease),
+        background var(--pp-fast) ease,
+        border-color var(--pp-fast) ease,
+        box-shadow var(--pp-fast) ease !important;
+}
+
+[data-testid="stSidebarNav"] a p {
+    color: #FFFFFF !important;
+    font-size: 0.92rem !important;
+    font-weight: 740 !important;
+    letter-spacing: 0 !important;
+}
+
+[data-testid="stSidebarNav"] a:hover {
+    transform: translateX(3px);
+    background: rgba(255, 255, 255, 0.15) !important;
+    border-color: rgba(255, 255, 255, 0.20) !important;
+}
+
+[data-testid="stSidebarNav"] a[aria-current="page"] {
+    background: rgba(255, 255, 255, 0.94) !important;
+    border-color: rgba(255, 255, 255, 0.96) !important;
+    box-shadow:
+        0 10px 28px rgba(0, 62, 51, 0.16),
+        inset 0 1px 0 rgba(255, 255, 255, 0.78) !important;
+}
+
+[data-testid="stSidebarNav"] a[aria-current="page"] p {
+    color: var(--pp-dark-green) !important;
+    font-weight: 840 !important;
+}
+
+[data-testid="stSidebarNav"] a[aria-current="page"]::before {
+    content: "";
+    position: absolute;
+    left: -1px;
+    top: 10px;
+    bottom: 10px;
+    width: 5px;
+    border-radius: 0 var(--pp-radius-pill) var(--pp-radius-pill) 0;
+    background: var(--pp-brand-yellow) !important;
+    box-shadow: 0 0 14px rgba(245, 198, 42, 0.42);
+}
+
+.pp-sidebar-brand,
+.pp-enterprise-shell-note {
+    position: relative;
+    overflow: hidden;
+    margin: 0.55rem 0 1.1rem;
+    padding: 1.05rem;
+    border: 1px solid rgba(255, 255, 255, 0.24) !important;
+    border-radius: var(--pp-radius-lg);
+    background:
+        linear-gradient(
+            145deg,
+            rgba(255, 255, 255, 0.18),
+            rgba(255, 255, 255, 0.10)
+        ) !important;
+    box-shadow:
+        0 14px 34px rgba(0, 62, 51, 0.13),
+        inset 0 1px 0 rgba(255, 255, 255, 0.18) !important;
+    backdrop-filter: blur(16px) saturate(135%);
+}
+
+.pp-sidebar-brand::after,
+.pp-enterprise-shell-note::after {
+    content: "";
+    position: absolute;
+    right: -52px;
+    bottom: -58px;
+    width: 150px;
+    height: 120px;
+    border-radius: 58% 42% 68% 32%;
+    background: rgba(255, 255, 255, 0.10);
+    transform: rotate(-12deg);
+}
+
+.pp-sidebar-logo {
+    display: flex;
+    align-items: center;
+    min-height: 72px !important;
+    padding: 14px 16px 18px !important;
+    border-radius: 18px !important;
+    background: rgba(255, 255, 255, 0.96) !important;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.72);
+}
+
+.pp-sidebar-logo img {
+    display: block;
+    width: auto;
+    max-width: 172px;
+    max-height: 58px;
+    object-fit: contain;
+}
+
+.pp-sidebar-product {
+    position: relative;
+    z-index: 1;
+    color: #FFFFFF !important;
+    font-size: 0.94rem;
+    font-weight: 840 !important;
+    letter-spacing: -0.015em;
+}
+
+.pp-sidebar-edition {
+    position: relative;
+    z-index: 1;
+    margin-top: 0.2rem;
+    color: rgba(255, 255, 255, 0.74) !important;
+    font-size: 0.72rem;
+    font-weight: 660;
+    letter-spacing: 0.04em;
+}
+
+.pp-sidebar-status-grid {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.55rem;
+    margin-top: 0.8rem;
+}
+
+.pp-sidebar-status {
+    padding: 0.72rem;
+    border: 1px solid rgba(255, 255, 255, 0.20) !important;
+    border-radius: 13px;
+    background: rgba(255, 255, 255, 0.13) !important;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.10);
+}
+
+.pp-sidebar-status span {
+    display: block;
+    color: rgba(255, 255, 255, 0.72) !important;
+    font-size: 0.66rem;
+    font-weight: 660;
+}
+
+.pp-sidebar-status strong {
+    display: block;
+    margin-top: 0.25rem;
+    color: #FFFFFF !important;
+    font-size: 0.98rem;
+    font-weight: 840;
+}
+
+[data-testid="stSidebar"] [data-testid="stButton"] button {
+    min-height: 48px !important;
+    border: 1px solid rgba(255, 255, 255, 0.94) !important;
+    border-radius: 14px !important;
+    background: rgba(255, 255, 255, 0.96) !important;
+    color: var(--pp-dark-green) !important;
+    box-shadow:
+        0 9px 24px rgba(0, 62, 51, 0.16),
+        inset 0 1px 0 rgba(255, 255, 255, 0.86) !important;
+}
+
+[data-testid="stSidebar"] [data-testid="stButton"] button p {
+    color: var(--pp-dark-green) !important;
+    font-weight: 820 !important;
+}
+
+[data-testid="stSidebar"] [data-testid="stButton"] button:hover {
+    transform: translateY(-1px);
+    background: #FFFFFF !important;
+    border-color: #FFFFFF !important;
+    box-shadow:
+        0 13px 30px rgba(0, 62, 51, 0.20),
+        inset 0 1px 0 #FFFFFF !important;
+}
+
+[data-testid="stSidebarCollapseButton"] button {
+    color: var(--pp-dark-green) !important;
+    background: rgba(255, 255, 255, 0.90) !important;
+    border-radius: 12px !important;
+}
+
+/* --------------------------------------------------------------------------
+   04. Hero
+   -------------------------------------------------------------------------- */
+
+.pp-hero,
+.pp-enterprise-hero,
+.pp-executive-hero {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    margin-bottom: 2.7rem;
+    padding: clamp(2.35rem, 4.4vw, 4.55rem);
+    border: 1px solid rgba(123, 170, 60, 0.21);
+    border-radius: var(--pp-radius-hero);
+    background:
+        radial-gradient(circle at 4% 2%, rgba(123, 170, 60, 0.22), transparent 28%),
+        radial-gradient(circle at 91% 2%, rgba(216, 183, 106, 0.25), transparent 26%),
+        radial-gradient(circle at 100% 100%, rgba(123, 170, 60, 0.20), transparent 34%),
+        linear-gradient(
+            135deg,
+            #FFFDF8 0%,
+            #F8F7F0 55%,
+            #EEF4E5 100%
+        );
+    color: var(--pp-text);
+    box-shadow:
+        0 18px 44px rgba(0, 48, 39, 0.07),
+        0 48px 110px rgba(0, 48, 39, 0.07),
+        inset 0 1px 0 rgba(255, 255, 255, 0.90);
+}
+
+.pp-hero::before,
+.pp-enterprise-hero::before,
+.pp-executive-hero::before {
+    content: "";
+    position: absolute;
+    right: -6%;
+    bottom: -34%;
+    width: 440px;
+    height: 340px;
+    z-index: -1;
+    border-radius: 58% 42% 68% 32% / 46% 52% 48% 54%;
+    background: rgba(123, 170, 60, 0.12);
+    filter: blur(2px);
+    transform: rotate(-13deg);
+}
+
+.pp-hero::after,
+.pp-enterprise-hero::after,
+.pp-executive-hero::after {
+    content: "";
+    position: absolute;
+    top: -115px;
+    right: 14%;
+    width: 240px;
+    height: 240px;
+    z-index: -1;
+    border-radius: 50%;
+    background: rgba(216, 183, 106, 0.13);
+    filter: blur(4px);
+}
+
+.pp-hero-content {
+    position: relative;
+    z-index: 1;
+    max-width: 980px;
+}
+
+.pp-product-signature,
+.pp-hero-kicker,
+.pp-card-kicker,
+.pp-section-kicker,
+.pp-feed-source {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    color: var(--pp-brand-green-deep) !important;
+    font-size: var(--pp-label);
+    font-weight: 840;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+}
+
+.pp-product-signature {
+    margin-bottom: 0.72rem;
+    padding: 0.5rem 0.78rem;
+    border: 1px solid rgba(123, 170, 60, 0.28);
+    border-radius: var(--pp-radius-pill);
+    background: rgba(255, 255, 255, 0.72);
+    box-shadow: 0 8px 20px rgba(0, 48, 39, 0.04);
+    backdrop-filter: blur(10px);
+}
+
+.pp-product-signature::before {
+    content: "";
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--pp-brand-green);
+    box-shadow:
+        0 0 0 4px rgba(123, 170, 60, 0.12),
+        0 0 16px rgba(123, 170, 60, 0.32);
+}
+
+.pp-hero-title {
+    max-width: 960px;
+    margin: 0.2rem 0 0;
+    color: var(--pp-dark-green) !important;
+    font-size: clamp(3.15rem, 5.8vw, 5.9rem) !important;
+    font-weight: 850 !important;
+    line-height: 1.01 !important;
+    letter-spacing: -0.058em !important;
+    text-wrap: balance;
+}
+
+.pp-hero-summary,
+.pp-hero-copy {
+    max-width: 780px;
+    margin-top: 1.05rem;
+    color: var(--pp-text-muted) !important;
+    font-size: var(--pp-body-lg);
+    line-height: 1.84;
+}
+
+.pp-hero-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.58rem;
+    margin-top: 1.65rem;
+}
+
+/* --------------------------------------------------------------------------
+   05. Executive Narrative
+   -------------------------------------------------------------------------- */
+
+.pp-executive-narrative {
+    position: relative;
+    overflow: hidden;
+    margin: 3.3rem 0;
+    padding: clamp(1.8rem, 3.6vw, 3.1rem);
+    border: 1px solid rgba(123, 170, 60, 0.20);
+    border-left: 5px solid var(--pp-brand-green);
+    border-radius: 0 var(--pp-radius-xl) var(--pp-radius-xl) 0;
+    background:
+        radial-gradient(circle at 92% 0%, rgba(216, 183, 106, 0.14), transparent 28%),
+        linear-gradient(145deg, #F9FBF4 0%, #F0F4E8 100%);
+    box-shadow: var(--pp-shadow-sm);
+}
+
+.pp-executive-narrative-label {
+    color: var(--pp-brand-green-deep);
+    font-size: var(--pp-label);
+    font-weight: 840;
+    letter-spacing: 0.09em;
+}
+
+.pp-executive-narrative-title {
+    max-width: 960px;
+    margin-top: 0.75rem;
+    color: var(--pp-text-strong);
+    font-size: clamp(1.6rem, 2.9vw, 2.65rem);
+    font-weight: 820;
+    line-height: 1.3;
+    letter-spacing: -0.04em;
+    text-wrap: balance;
+}
+
+.pp-executive-narrative-copy {
+    max-width: 860px;
+    margin-top: 0.9rem;
+    color: var(--pp-text-muted);
+    font-size: var(--pp-body);
+    line-height: 1.84;
+}
+
+.pp-executive-strip {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.9rem;
+    max-width: 1000px;
+    margin-top: 2rem;
+}
+
+.pp-executive-strip-item {
+    min-width: 0;
+    padding: 1.05rem 1.15rem;
+    border: 1px solid rgba(0, 62, 51, 0.10);
+    border-radius: var(--pp-radius-md);
+    background: rgba(255, 255, 255, 0.72);
+    box-shadow:
+        0 8px 22px rgba(0, 48, 39, 0.04),
+        inset 0 1px 0 rgba(255, 255, 255, 0.82);
+    backdrop-filter: blur(10px);
+}
+
+.pp-executive-strip-label {
+    display: block;
+    color: var(--pp-text-muted) !important;
+    font-size: 0.68rem;
+    font-weight: 720;
+}
+
+.pp-executive-strip-item strong {
+    display: block;
+    margin-top: 0.25rem;
+    color: var(--pp-dark-green) !important;
+    font-size: 1.05rem;
+    font-weight: 850;
+}
+
+/* --------------------------------------------------------------------------
+   06. Section Headers
+   -------------------------------------------------------------------------- */
+
+.pp-section-header,
+.pp-enterprise-section-header {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 1rem;
+    margin: 5rem 0 1.55rem;
+}
+
+.pp-section-icon,
+.pp-enterprise-section-icon {
+    display: grid;
+    place-items: center;
+    width: 62px;
+    height: 62px;
+    flex-basis: 62px;
+    border: 1px solid rgba(123, 170, 60, 0.26);
+    border-radius: 18px 18px 18px 8px;
+    background:
+        linear-gradient(145deg, #F5F9EE 0%, #E8F1DD 100%);
+    color: var(--pp-dark-green) !important;
+    font-size: 1.08rem;
+    font-weight: 850;
+    box-shadow:
+        0 8px 22px rgba(0, 48, 39, 0.05),
+        inset 0 1px 0 rgba(255, 255, 255, 0.80);
+}
+
+.pp-section-title {
+    color: var(--pp-text-strong);
+    font-size: var(--pp-h2);
+    font-weight: 840;
+    line-height: 1.1;
+    letter-spacing: -0.048em;
+}
+
+.pp-section-subtitle {
+    max-width: 800px;
+    margin-top: 0.32rem;
+    color: var(--pp-text-muted);
+    font-size: 0.92rem;
+    line-height: 1.72;
+}
+
+.pp-section-header + .pp-grid,
+.pp-enterprise-section-header + .pp-grid {
+    position: relative;
+    padding: 1.35rem;
+    border: 1px solid rgba(0, 62, 51, 0.055);
+    border-radius: 30px;
+    background:
+        linear-gradient(
+            145deg,
+            rgba(255, 255, 255, 0.36),
+            rgba(247, 244, 236, 0.58)
+        );
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.58),
+        0 24px 60px rgba(0, 48, 39, 0.035);
+}
+
+/* --------------------------------------------------------------------------
+   07. Grid
+   -------------------------------------------------------------------------- */
+
+.pp-grid {
+    display: grid;
+    gap: 1rem;
+}
+
+.pp-grid-2 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.pp-grid-3 {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.pp-grid-4 {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.pp-grid-7-5 {
+    grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+}
+
+.pp-grid-8-4 {
+    grid-template-columns: minmax(0, 8fr) minmax(0, 4fr);
+}
+
+.pp-grid-9-3 {
+    grid-template-columns: minmax(0, 9fr) minmax(0, 3fr);
+}
+
+.pp-stack {
+    display: grid;
+    gap: 1rem;
+}
+
+/* --------------------------------------------------------------------------
+   08. Cards
+   -------------------------------------------------------------------------- */
+
+.pp-card,
+.pp-enterprise-card,
+.pp-card-medium,
+.pp-card-large,
+.pp-card-compact,
+.pp-card-summary,
+.pp-card-highlight,
+.pp-risk-card,
+.pp-opportunity-card,
+.pp-launcher-card,
+.pp-decision-card,
+.pp-intelligence-card,
+.pp-health-card {
+    position: relative;
+    overflow: hidden;
+    min-width: 0;
+    padding: 1.55rem;
+    border: 1px solid rgba(0, 62, 51, 0.10);
+    border-radius: var(--pp-radius-lg);
+    background:
+        linear-gradient(
+            150deg,
+            #FFFEFB 0%,
+            #F8F6EF 100%
+        );
+    box-shadow:
+        0 14px 34px rgba(0, 48, 39, 0.06),
+        0 34px 76px rgba(0, 48, 39, 0.06),
+        inset 0 1px 0 rgba(255, 255, 255, 0.88);
+    transition:
+        transform var(--pp-normal) var(--pp-ease),
+        border-color var(--pp-normal) ease,
+        box-shadow var(--pp-normal) ease,
+        background var(--pp-normal) ease;
+}
+
+.pp-card::after,
+.pp-enterprise-card::after,
+.pp-health-card::after,
+.pp-launcher-card::after,
+.pp-intelligence-card::after,
+.pp-decision-card::after,
+.pp-risk-card::after,
+.pp-opportunity-card::after {
+    content: "";
+    position: absolute;
+    inset: 0 0 auto 0;
+    height: 38%;
+    pointer-events: none;
+    background:
+        linear-gradient(
+            180deg,
+            rgba(255, 255, 255, 0.42) 0%,
+            rgba(255, 255, 255, 0.06) 100%
+        );
+    opacity: 0.55;
+}
+
+.pp-card::before,
+.pp-enterprise-card::before,
+.pp-health-card::before,
+.pp-launcher-card::before,
+.pp-intelligence-card::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 20px;
+    bottom: 20px;
+    width: 4px;
+    border-radius: 0 var(--pp-radius-pill) var(--pp-radius-pill) 0;
+    background: linear-gradient(
+        180deg,
+        rgba(123, 170, 60, 0.92),
+        rgba(123, 170, 60, 0.34)
+    );
+    opacity: 0.82;
+}
+
+.pp-card:hover,
+.pp-enterprise-card:hover,
+.pp-decision-card:hover,
+.pp-intelligence-card:hover,
+.pp-launcher-card:hover,
+.pp-health-card:hover,
+.pp-risk-card:hover,
+.pp-opportunity-card:hover {
+    transform: translateY(-6px) scale(1.004);
+    border-color: var(--pp-border-brand);
+    box-shadow: var(--pp-shadow-hover);
+}
+
+.pp-card-large,
+.pp-card-highlight {
+    padding: clamp(1.7rem, 3vw, 2.5rem);
+    border-radius: var(--pp-radius-xl);
+}
+
+.pp-card-highlight {
+    background:
+        radial-gradient(circle at 100% 0%, rgba(216, 183, 106, 0.12), transparent 28%),
+        linear-gradient(150deg, #FFFDF8 0%, #F2F7EA 100%);
+    border-color: rgba(123, 170, 60, 0.26);
+}
+
+.pp-card-title {
+    margin-top: 0.62rem;
+    color: var(--pp-text-strong);
+    font-size: var(--pp-h3);
+    font-weight: 820;
+    line-height: 1.42;
+    letter-spacing: -0.03em;
+}
+
+.pp-card-desc,
+.pp-card-copy,
+.pp-card-meta {
+    margin-top: 0.68rem;
+    color: var(--pp-text-muted);
+    font-size: 0.91rem;
+    line-height: 1.8;
+}
+
+.pp-card-value {
+    color: var(--pp-dark-green);
+    font-size: clamp(2.55rem, 5.2vw, 4.8rem);
+    font-weight: 860;
+    line-height: 0.96;
+    letter-spacing: -0.06em;
+    text-shadow: 0 10px 26px rgba(0, 62, 51, 0.08);
+}
+
+.pp-card-index {
+    display: grid;
+    place-items: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 12px 12px 12px 5px;
+    background: var(--pp-brand-green-soft);
+    color: var(--pp-brand-green-deep);
+    font-size: 0.78rem;
+    font-weight: 860;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.76);
+}
+
+.pp-card-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.8rem;
+}
+
+.pp-launcher-card {
+    background:
+        radial-gradient(circle at 100% 0%, rgba(123, 170, 60, 0.10), transparent 30%),
+        linear-gradient(145deg, #FCFDF9 0%, #EEF4E7 100%);
+}
+
+.pp-risk-card,
+.pp-card:has(.pp-badge.danger) {
+    border-color: rgba(163, 71, 63, 0.12);
+    background:
+        radial-gradient(circle at 100% 0%, rgba(163, 71, 63, 0.07), transparent 34%),
+        linear-gradient(145deg, #FFFDFB 0%, #F8F1EE 100%);
+}
+
+.pp-risk-card::before,
+.pp-card:has(.pp-badge.danger)::before {
+    background: linear-gradient(
+        180deg,
+        rgba(163, 71, 63, 0.88),
+        rgba(216, 183, 106, 0.46)
+    );
+}
+
+.pp-opportunity-card,
+.pp-card:has(.pp-badge.success) {
+    border-color: rgba(123, 170, 60, 0.16);
+    background:
+        radial-gradient(circle at 100% 0%, rgba(123, 170, 60, 0.12), transparent 34%),
+        linear-gradient(145deg, #FDFEF9 0%, #ECF4E5 100%);
+}
+
+
+/* --------------------------------------------------------------------------
+   08A. Executive KPI Cards
+   -------------------------------------------------------------------------- */
+
+.pp-health-card,
+.pp-card:has(.pp-card-value) {
+    padding: 1.8rem 1.7rem 1.9rem;
+    border-color: rgba(123, 170, 60, 0.18);
+    background:
+        radial-gradient(circle at 100% 0%, rgba(123, 170, 60, 0.10), transparent 34%),
+        linear-gradient(155deg, #FFFDF9 0%, #F2F7EA 100%);
+}
+
+.pp-health-card .pp-card-kicker,
+.pp-card:has(.pp-card-value) .pp-card-kicker {
+    font-size: 0.69rem;
+    letter-spacing: 0.08em;
+}
+
+.pp-health-card .pp-card-value,
+.pp-card:has(.pp-card-value) .pp-card-value {
+    margin-top: 0.9rem;
+    font-size: clamp(3.35rem, 5.8vw, 5.25rem);
+    line-height: 0.9;
+}
+
+.pp-health-card .pp-card-title,
+.pp-card:has(.pp-card-value) .pp-card-title {
+    margin-top: 1rem;
+    font-size: clamp(1.35rem, 2vw, 1.72rem);
+}
+
+.pp-health-card:hover,
+.pp-card:has(.pp-card-value):hover {
+    border-color: rgba(123, 170, 60, 0.38);
+    box-shadow:
+        0 20px 44px rgba(0, 48, 39, 0.08),
+        0 42px 92px rgba(0, 48, 39, 0.07),
+        inset 0 1px 0 rgba(255, 255, 255, 0.92);
+}
+
+/* --------------------------------------------------------------------------
+   09. Decision Center
+   -------------------------------------------------------------------------- */
+
+.pp-decision-card {
+    padding: 1.75rem;
+}
+
+.pp-decision-card::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 22px;
+    bottom: 22px;
+    width: 5px;
+    border-radius: 0 var(--pp-radius-pill) var(--pp-radius-pill) 0;
+    background: linear-gradient(
+        180deg,
+        var(--pp-brand-green),
+        var(--pp-brand-green-deep)
+    );
+    box-shadow: 0 0 18px rgba(123, 170, 60, 0.22);
+}
+
+.pp-decision-question {
+    margin-top: 0.9rem;
+    color: var(--pp-text-strong);
+    font-size: 1.18rem;
+    font-weight: 820;
+    line-height: 1.45;
+}
+
+.pp-decision-reason,
+.pp-decision-impact,
+.pp-decision-action {
+    margin-top: 1.05rem;
+    padding-top: 1.05rem;
+    border-top: 1px solid var(--pp-border);
+}
+
+.pp-decision-label {
+    color: var(--pp-text-faint);
+    font-size: 0.68rem;
+    font-weight: 820;
+    letter-spacing: 0.08em;
+}
+
+.pp-decision-text {
+    margin-top: 0.35rem;
+    color: var(--pp-text);
+    font-size: 0.91rem;
+    line-height: 1.74;
+}
+
+/* --------------------------------------------------------------------------
+   10. Intelligence Feed
+   -------------------------------------------------------------------------- */
+
+.pp-intelligence-feed,
+.pp-feed-list {
+    display: grid;
+    gap: 1rem;
+}
+
+.pp-feed-card,
+.pp-evidence-feed-card {
+    position: relative;
+    overflow: hidden;
+    padding: clamp(1.4rem, 2.8vw, 2.1rem);
+    border: 1px solid rgba(0, 62, 51, 0.10);
+    border-radius: var(--pp-radius-organic);
+    background:
+        linear-gradient(150deg, #FFFEFB 0%, #F8F6EF 100%);
+    box-shadow: var(--pp-shadow-sm);
+    transition:
+        transform var(--pp-normal) var(--pp-ease),
+        border-color var(--pp-normal) ease,
+        box-shadow var(--pp-normal) ease;
+}
+
+.pp-feed-card::before,
+.pp-evidence-feed-card::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 22px;
+    bottom: 22px;
+    width: 4px;
+    border-radius: 0 var(--pp-radius-pill) var(--pp-radius-pill) 0;
+    background: linear-gradient(
+        180deg,
+        var(--pp-brand-green),
+        rgba(216, 183, 106, 0.75)
+    );
+}
+
+.pp-feed-card:hover,
+.pp-evidence-feed-card:hover {
+    transform: translateY(-4px);
+    border-color: var(--pp-border-brand);
+    box-shadow: var(--pp-shadow-hover);
+}
+
+.pp-feed-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+}
+
+.pp-feed-time {
+    color: var(--pp-text-faint);
+    font-size: 0.72rem;
+}
+
+.pp-feed-title {
+    max-width: 940px;
+    margin-top: 0.9rem;
+    color: var(--pp-text-strong);
+    font-size: clamp(1.14rem, 2vw, 1.48rem);
+    font-weight: 820;
+    line-height: 1.45;
+    letter-spacing: -0.03em;
+}
+
+.pp-feed-content {
+    max-width: 940px;
+    margin-top: 0.68rem;
+    color: var(--pp-text-muted);
+    font-size: 0.92rem;
+    line-height: 1.8;
+}
+
+.pp-feed-ai {
+    margin-top: 1.15rem;
+    padding: 1.05rem 1.15rem;
+    border-left: 4px solid var(--pp-brand-green);
+    border-radius: 0 17px 17px 0;
+    background:
+        linear-gradient(145deg, #F6FAF0 0%, #EEF5E6 100%);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.72);
+}
+
+.pp-feed-ai-label {
+    color: var(--pp-brand-green-deep);
+    font-size: 0.69rem;
+    font-weight: 860;
+    letter-spacing: 0.07em;
+}
+
+.pp-feed-ai-copy {
+    margin-top: 0.4rem;
+    color: var(--pp-text);
+    font-size: 0.92rem;
+    line-height: 1.74;
+}
+
+.pp-feed-recommendation {
+    margin-top: 0.82rem;
+    color: var(--pp-dark-green);
+    font-size: 0.89rem;
+    font-weight: 740;
+    line-height: 1.7;
+}
+
+.pp-feed-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.45rem;
+    margin-top: 1.05rem;
+}
+
+.pp-feed-action,
+.pp-evidence-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    margin-top: 1.15rem;
+    color: var(--pp-dark-green) !important;
+    font-size: 0.85rem;
+    font-weight: 820;
+    text-decoration: none !important;
+}
+
+.pp-feed-action:hover,
+.pp-evidence-link:hover {
+    color: var(--pp-brand-green-deep) !important;
+}
+
+/* --------------------------------------------------------------------------
+   11. Badges and Chips
+   -------------------------------------------------------------------------- */
+
+.pp-badge,
+.pp-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    min-height: 28px;
+    padding: 0.31rem 0.68rem;
+    border: 1px solid var(--pp-border);
+    border-radius: var(--pp-radius-pill);
+    background: rgba(255, 255, 255, 0.74);
+    color: var(--pp-text-muted);
+    font-size: 0.69rem;
+    font-weight: 760;
+    line-height: 1;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.76);
+}
+
+.pp-badge.success {
+    border-color: rgba(67, 129, 79, 0.20);
+    background: var(--pp-success-soft);
+    color: var(--pp-success);
+}
+
+.pp-badge.warning,
+.pp-badge.gold {
+    border-color: rgba(155, 106, 20, 0.20);
+    background: var(--pp-warning-soft);
+    color: var(--pp-warning);
+}
+
+.pp-badge.danger {
+    border-color: rgba(163, 71, 63, 0.20);
+    background: var(--pp-danger-soft);
+    color: var(--pp-danger);
+}
+
+.pp-badge.info {
+    border-color: rgba(69, 111, 122, 0.20);
+    background: var(--pp-info-soft);
+    color: var(--pp-info);
+}
+
+.pp-badge.green,
+.pp-badge.brand {
+    border-color: rgba(123, 170, 60, 0.24);
+    background: var(--pp-brand-green-soft);
+    color: var(--pp-brand-green-deep);
+}
+
+.pp-hero .pp-badge.dark,
+.pp-enterprise-hero .pp-badge.dark {
+    color: var(--pp-dark-green) !important;
+    border-color: rgba(0, 62, 51, 0.10) !important;
+    background: rgba(255, 255, 255, 0.72) !important;
+}
+
+/* --------------------------------------------------------------------------
+   12. Buttons
+   -------------------------------------------------------------------------- */
+
+[data-testid="stButton"] button,
+[data-testid="stDownloadButton"] button,
+[data-testid="stLinkButton"] a {
+    min-height: 44px !important;
+    padding: 0.64rem 1.05rem !important;
+    border: 1px solid var(--pp-border-strong) !important;
+    border-radius: 14px !important;
+    background: rgba(255, 255, 255, 0.92) !important;
+    color: var(--pp-dark-green) !important;
+    font-size: 0.88rem !important;
+    font-weight: 800 !important;
+    box-shadow:
+        0 7px 18px rgba(0, 48, 39, 0.045),
+        inset 0 1px 0 rgba(255, 255, 255, 0.86) !important;
+    transition:
+        transform var(--pp-fast) var(--pp-ease),
+        border-color var(--pp-fast) ease,
+        background var(--pp-fast) ease,
+        box-shadow var(--pp-fast) ease !important;
+}
+
+[data-testid="stButton"] button:hover,
+[data-testid="stDownloadButton"] button:hover,
+[data-testid="stLinkButton"] a:hover {
+    transform: translateY(-2px);
+    border-color: rgba(123, 170, 60, 0.44) !important;
+    background: var(--pp-brand-green-mist) !important;
+    box-shadow: var(--pp-shadow-sm) !important;
+}
+
+[data-testid="stButton"] button[kind="primary"] {
+    border-color: var(--pp-brand-green) !important;
+    background:
+        linear-gradient(
+            180deg,
+            #82B340 0%,
+            #6F9D33 100%
+        ) !important;
+    color: #FFFFFF !important;
+    box-shadow:
+        0 10px 24px rgba(123, 170, 60, 0.24),
+        inset 0 1px 0 rgba(255, 255, 255, 0.20) !important;
+}
+
+[data-testid="stButton"] button[kind="primary"]:hover {
+    border-color: var(--pp-brand-green-hover) !important;
+    background:
+        linear-gradient(
+            180deg,
+            #76A83A 0%,
+            #64912D 100%
+        ) !important;
+}
+
+/* --------------------------------------------------------------------------
+   13. Forms
+   -------------------------------------------------------------------------- */
+
+[data-testid="stWidgetLabel"] p {
+    color: var(--pp-text-muted) !important;
+    font-size: 0.76rem !important;
+    font-weight: 740 !important;
+}
+
+[data-testid="stTextInput"] [data-baseweb="input"] > div,
+[data-testid="stSelectbox"] [data-baseweb="select"] > div {
+    min-height: 46px !important;
+    border: 1px solid var(--pp-border-strong) !important;
+    border-radius: 14px !important;
+    background: rgba(255, 255, 255, 0.90) !important;
+    box-shadow:
+        0 6px 16px rgba(0, 48, 39, 0.035),
+        inset 0 1px 0 rgba(255, 255, 255, 0.86) !important;
+}
+
+[data-testid="stTextInput"] [data-baseweb="input"] > div:hover,
+[data-testid="stSelectbox"] [data-baseweb="select"] > div:hover {
+    border-color: rgba(123, 170, 60, 0.38) !important;
+}
+
+[data-testid="stTextInput"] [data-baseweb="input"] > div:focus-within,
+[data-testid="stSelectbox"] [data-baseweb="select"] > div:focus-within {
+    border-color: rgba(123, 170, 60, 0.62) !important;
+    box-shadow:
+        0 0 0 3px rgba(123, 170, 60, 0.11),
+        0 8px 20px rgba(0, 48, 39, 0.04) !important;
+}
+
+[data-testid="stTextInput"] input {
+    min-height: 44px !important;
+    border: 0 !important;
+    outline: 0 !important;
+    background: transparent !important;
+    color: var(--pp-text) !important;
+    box-shadow: none !important;
+}
+
+/* --------------------------------------------------------------------------
+   14. Tabs
+   -------------------------------------------------------------------------- */
+
+[data-baseweb="tab-list"] {
+    gap: 0.36rem;
+    padding: 0.28rem;
+    border: 1px solid var(--pp-border);
+    border-radius: 15px;
+    background: rgba(255, 255, 255, 0.70);
+    box-shadow:
+        0 8px 20px rgba(0, 48, 39, 0.04),
+        inset 0 1px 0 rgba(255, 255, 255, 0.86);
+}
+
+[data-baseweb="tab"] {
+    min-height: 39px;
+    border-radius: 11px;
+    color: var(--pp-text-muted) !important;
+    font-weight: 740 !important;
+}
+
+[aria-selected="true"][data-baseweb="tab"] {
+    background:
+        linear-gradient(145deg, #F5F9EE 0%, #E8F1DD 100%) !important;
+    color: var(--pp-dark-green) !important;
+    box-shadow:
+        0 6px 16px rgba(0, 48, 39, 0.05),
+        inset 0 1px 0 rgba(255, 255, 255, 0.80) !important;
+}
+
+/* --------------------------------------------------------------------------
+   15. Evidence Table
+   -------------------------------------------------------------------------- */
+
+.pp-evidence-table-wrap,
+.pp-table-wrap {
+    overflow: hidden;
+    border: 1px solid var(--pp-border);
+    border-radius: var(--pp-radius-lg);
+    background: var(--pp-surface);
+    box-shadow: var(--pp-shadow-sm);
+}
+
+.pp-evidence-table,
+.pp-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+}
+
+.pp-evidence-table thead,
+.pp-table thead {
+    background:
+        linear-gradient(145deg, #F5F9EE 0%, #EDF4E5 100%);
+}
+
+.pp-evidence-table th,
+.pp-table th {
+    padding: 1rem;
+    color: var(--pp-dark-green);
+    font-size: 0.72rem;
+    font-weight: 840;
+    text-align: left;
+}
+
+.pp-evidence-table td,
+.pp-table td {
+    padding: 1rem;
+    border-top: 1px solid var(--pp-border);
+    color: var(--pp-text);
+    font-size: 0.84rem;
+    line-height: 1.64;
+}
+
+/* --------------------------------------------------------------------------
+   16. Update Status
+   -------------------------------------------------------------------------- */
+
+.pp-update-panel {
+    margin-top: 1rem;
+    padding: 1.05rem;
+    border: 1px solid rgba(255, 255, 255, 0.22);
+    border-radius: 18px;
+    background: rgba(255, 255, 255, 0.14);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.12);
+    backdrop-filter: blur(12px);
+}
+
+.pp-update-label {
+    color: rgba(255, 255, 255, 0.72) !important;
+    font-size: 0.68rem;
+    font-weight: 740;
+}
+
+.pp-update-value {
+    margin-top: 0.2rem;
+    color: #FFFFFF !important;
+    font-size: 0.9rem;
+    font-weight: 840;
+}
+
+.pp-update-meta {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.55rem;
+    margin-top: 0.75rem;
+}
+
+.pp-update-meta-item {
+    padding: 0.7rem;
+    border: 1px solid rgba(255, 255, 255, 0.20);
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.12);
+}
+
+/* --------------------------------------------------------------------------
+   17. Accessibility
+   -------------------------------------------------------------------------- */
+
+:focus-visible {
+    outline: 3px solid rgba(123, 170, 60, 0.32) !important;
+    outline-offset: 2px !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        scroll-behavior: auto !important;
+        transition-duration: 0.01ms !important;
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+    }
+}
+
+/* --------------------------------------------------------------------------
+   18. Responsive
+   -------------------------------------------------------------------------- */
+
+@media (max-width: 1120px) {
+    .block-container {
+        padding-inline: 1.8rem;
+    }
+
+    .pp-grid-4 {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .pp-grid-3,
+    .pp-grid-7-5,
+    .pp-grid-8-4,
+    .pp-grid-9-3 {
+        grid-template-columns: 1fr;
+    }
+
+    .pp-hero,
+    .pp-enterprise-hero,
+    .pp-executive-hero {
+        padding: 3rem;
+    }
+}
+
+@media (max-width: 820px) {
+    .block-container {
+        padding: 1.15rem 1rem 4.5rem;
+    }
+
+    .pp-hero,
+    .pp-enterprise-hero,
+    .pp-executive-hero {
+        padding: 2.15rem 1.45rem;
+        border-radius: 32px 32px 32px 14px;
+    }
+
+    .pp-hero-title {
+        font-size: clamp(2.2rem, 10vw, 3.3rem) !important;
+    }
+
+    .pp-executive-strip,
+    .pp-grid-2,
+    .pp-grid-3,
+    .pp-grid-4,
+    .pp-update-meta {
+        grid-template-columns: 1fr;
+    }
+
+    .pp-section-header,
+    .pp-enterprise-section-header {
+        grid-template-columns: auto minmax(0, 1fr);
+        align-items: start;
+    }
+
+    .pp-section-header > .pp-badge,
+    .pp-enterprise-section-header > .pp-badge {
+        grid-column: 2;
+        justify-self: start;
+    }
+}
+
+@media (max-width: 560px) {
+    .pp-sidebar-status-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .pp-section-icon,
+    .pp-enterprise-section-icon {
+        width: 46px;
+        height: 46px;
+        flex-basis: 46px;
+    }
+
+    .pp-card,
+    .pp-enterprise-card,
+    .pp-card-large,
+    .pp-card-highlight,
+    .pp-feed-card,
+    .pp-evidence-feed-card {
+        padding: 1.2rem;
+        border-radius: 20px 20px 20px 10px;
+    }
+}
+
+/* ==========================================================================
+   GM-20 Executive Home Premium
+   Presentation Layer Only
+   Hero · Executive Brief · Decision Hierarchy · Health Feature
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   19. Hero Premium Architecture
+   -------------------------------------------------------------------------- */
+
+.pp-hero-gm20 {
+    min-height: 710px;
+    display: flex;
+    align-items: center;
+    padding: clamp(3.1rem, 5vw, 5.4rem);
+    border-radius: 50px 50px 50px 20px;
+    background:
+        radial-gradient(circle at 3% 0%, rgba(123, 170, 60, 0.18), transparent 27%),
+        radial-gradient(circle at 91% 3%, rgba(216, 183, 106, 0.22), transparent 24%),
+        radial-gradient(circle at 96% 100%, rgba(123, 170, 60, 0.18), transparent 32%),
+        linear-gradient(
+            135deg,
+            #FFFDF8 0%,
+            #F8F6EF 54%,
+            #EDF4E5 100%
+        );
+    box-shadow:
+        0 24px 54px rgba(0, 48, 39, 0.075),
+        0 58px 130px rgba(0, 48, 39, 0.07),
+        inset 0 1px 0 rgba(255, 255, 255, 0.94);
+}
+
+.pp-hero-gm20 .pp-hero-content {
+    width: 100%;
+    max-width: none;
+}
+
+.pp-hero-gm20 .pp-product-signature {
+    margin-bottom: 1.1rem;
+}
+
+.pp-hero-gm20 .pp-hero-kicker {
+    display: block;
+    margin-bottom: 0.35rem;
+    color: var(--pp-brand-green-deep) !important;
+    font-size: 0.78rem;
+    font-weight: 860;
+    letter-spacing: 0.11em;
+}
+
+.pp-hero-gm20 .pp-hero-title {
+    max-width: 980px;
+    margin-top: 0;
+    font-size: clamp(4.2rem, 7vw, 7rem) !important;
+    line-height: 0.98 !important;
+    letter-spacing: -0.065em !important;
+    text-wrap: balance;
+}
+
+.pp-hero-gm20 .pp-hero-summary {
+    max-width: 860px;
+    margin-top: 1.4rem;
+    color: #5D7068 !important;
+    font-size: clamp(1.04rem, 1.4vw, 1.22rem);
+    line-height: 1.86;
+}
+
+.pp-hero-gm20 .pp-hero-meta {
+    margin-top: 1.65rem;
+}
+
+.pp-hero-metrics {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1rem;
+    margin-top: 2.35rem;
+}
+
+.pp-hero-metric {
+    position: relative;
+    overflow: hidden;
+    min-height: 170px;
+    padding: 1.55rem 1.6rem 1.45rem;
+    border: 1px solid rgba(0, 62, 51, 0.09);
+    border-radius: 24px;
+    background:
+        linear-gradient(
+            150deg,
+            rgba(255, 255, 255, 0.92),
+            rgba(248, 246, 239, 0.78)
+        );
+    box-shadow:
+        0 12px 28px rgba(0, 48, 39, 0.045),
+        inset 0 1px 0 rgba(255, 255, 255, 0.92);
+    backdrop-filter: blur(12px);
+    transition:
+        transform var(--pp-normal) var(--pp-ease),
+        border-color var(--pp-normal) ease,
+        box-shadow var(--pp-normal) ease;
+}
+
+.pp-hero-metric::after {
+    content: "";
+    position: absolute;
+    inset: 0 0 auto 0;
+    height: 42%;
+    pointer-events: none;
+    background:
+        linear-gradient(
+            180deg,
+            rgba(255, 255, 255, 0.46),
+            rgba(255, 255, 255, 0)
+        );
+}
+
+.pp-hero-metric:hover {
+    transform: translateY(-5px);
+    border-color: rgba(123, 170, 60, 0.34);
+    box-shadow:
+        0 18px 40px rgba(0, 48, 39, 0.07),
+        0 36px 80px rgba(0, 48, 39, 0.065);
+}
+
+.pp-hero-metric-primary {
+    border-color: rgba(123, 170, 60, 0.24);
+    background:
+        radial-gradient(circle at 100% 0%, rgba(123, 170, 60, 0.12), transparent 34%),
+        linear-gradient(150deg, #FFFDF8 0%, #EEF5E6 100%);
+}
+
+.pp-hero-metric-number {
+    position: relative;
+    z-index: 1;
+    color: var(--pp-dark-green);
+    font-size: clamp(3.35rem, 5vw, 5.2rem);
+    font-weight: 880;
+    line-height: 0.88;
+    letter-spacing: -0.065em;
+}
+
+.pp-hero-metric-label {
+    position: relative;
+    z-index: 1;
+    margin-top: 0.8rem;
+    color: var(--pp-text-strong);
+    font-size: 1.05rem;
+    font-weight: 840;
+    letter-spacing: -0.025em;
+}
+
+.pp-hero-metric-note {
+    position: relative;
+    z-index: 1;
+    margin-top: 0.35rem;
+    color: var(--pp-text-muted);
+    font-size: 0.82rem;
+    line-height: 1.55;
+}
+
+/* --------------------------------------------------------------------------
+   20. Executive Brief Premium
+   -------------------------------------------------------------------------- */
+
+.pp-executive-brief-gm20 {
+    padding: clamp(2.15rem, 4vw, 3.5rem);
+    border-left-width: 6px;
+}
+
+.pp-executive-brief-gm20 .pp-executive-narrative-title {
+    max-width: 1040px;
+    font-size: clamp(2rem, 3.2vw, 3.15rem);
+    line-height: 1.22;
+}
+
+.pp-brief-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1rem;
+    margin-top: 2rem;
+}
+
+.pp-brief-card {
+    position: relative;
+    overflow: hidden;
+    min-height: 250px;
+    padding: 1.65rem;
+    border: 1px solid rgba(0, 62, 51, 0.10);
+    border-radius: 25px;
+    background:
+        linear-gradient(150deg, #FFFEFB 0%, #F8F6EF 100%);
+    box-shadow:
+        0 14px 32px rgba(0, 48, 39, 0.055),
+        0 30px 68px rgba(0, 48, 39, 0.05),
+        inset 0 1px 0 rgba(255, 255, 255, 0.90);
+    transition:
+        transform var(--pp-normal) var(--pp-ease),
+        box-shadow var(--pp-normal) ease,
+        border-color var(--pp-normal) ease;
+}
+
+.pp-brief-card::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 22px;
+    bottom: 22px;
+    width: 5px;
+    border-radius: 0 999px 999px 0;
+}
+
+.pp-brief-card:hover {
+    transform: translateY(-6px);
+    box-shadow: var(--pp-shadow-hover);
+}
+
+.pp-brief-card-priority::before {
+    background: linear-gradient(180deg, #7BAA3C, #557D27);
+}
+
+.pp-brief-card-watch::before {
+    background: linear-gradient(180deg, #D8B76A, #9B6A14);
+}
+
+.pp-brief-card-verify::before {
+    background: linear-gradient(180deg, #456F7A, #003E33);
+}
+
+.pp-brief-index {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 38px;
+    height: 38px;
+    margin-bottom: 1rem;
+    border-radius: 12px;
+    background: var(--pp-brand-green-soft);
+    color: var(--pp-brand-green-deep);
+    font-size: 0.76rem;
+    font-weight: 860;
+}
+
+.pp-brief-card-watch .pp-brief-index {
+    background: var(--pp-warning-soft);
+    color: var(--pp-warning);
+}
+
+.pp-brief-card-verify .pp-brief-index {
+    background: var(--pp-info-soft);
+    color: var(--pp-info);
+}
+
+/* --------------------------------------------------------------------------
+   21. Decision Hierarchy
+   -------------------------------------------------------------------------- */
+
+.pp-decision-grid {
+    gap: 1.15rem;
+}
+
+.pp-decision-card {
+    min-height: 460px;
+    padding: 1.85rem;
+}
+
+.pp-decision-card::before {
+    width: 6px;
+}
+
+.pp-decision-priority::before {
+    background: linear-gradient(180deg, #7BAA3C, #557D27);
+}
+
+.pp-decision-attention::before {
+    background: linear-gradient(180deg, #D8B76A, #9B6A14);
+}
+
+.pp-decision-action::before {
+    background: linear-gradient(180deg, #456F7A, #003E33);
+}
+
+.pp-decision-card .pp-decision-question {
+    margin-top: 1.15rem;
+    font-size: clamp(1.25rem, 1.8vw, 1.55rem);
+}
+
+.pp-decision-next {
+    margin-top: 1.05rem;
+    padding-top: 1.05rem;
+    border-top: 1px solid var(--pp-border);
+}
+
+/* --------------------------------------------------------------------------
+   22. Health Feature Architecture
+   -------------------------------------------------------------------------- */
+
+.pp-health-grid {
+    grid-template-columns: 1.2fr repeat(3, minmax(0, 1fr));
+}
+
+.pp-health-card {
+    min-height: 390px;
+}
+
+.pp-health-card-featured {
+    border-color: rgba(123, 170, 60, 0.30);
+    background:
+        radial-gradient(circle at 100% 0%, rgba(123, 170, 60, 0.15), transparent 34%),
+        radial-gradient(circle at 0% 100%, rgba(216, 183, 106, 0.10), transparent 28%),
+        linear-gradient(150deg, #FFFDF8 0%, #EEF5E6 100%);
+    box-shadow:
+        0 20px 44px rgba(0, 48, 39, 0.08),
+        0 42px 94px rgba(0, 48, 39, 0.07),
+        inset 0 1px 0 rgba(255, 255, 255, 0.92);
+}
+
+.pp-health-card-featured .pp-card-value {
+    margin-top: 1.1rem;
+    font-size: clamp(4.3rem, 6vw, 6.2rem);
+}
+
+.pp-health-card-featured .pp-card-title {
+    font-size: clamp(1.55rem, 2.2vw, 2rem);
+}
+
+.pp-health-card-secondary .pp-card-value {
+    font-size: clamp(3.15rem, 4.6vw, 4.8rem);
+}
+
+.pp-health-card-secondary {
+    background:
+        linear-gradient(150deg, #FFFEFB 0%, #F3F7ED 100%);
+}
+
+/* --------------------------------------------------------------------------
+   23. Risk · Opportunity · Workspace Rhythm
+   -------------------------------------------------------------------------- */
+
+.pp-risk-grid,
+.pp-opportunity-grid,
+.pp-workspace-grid {
+    gap: 1.1rem;
+}
+
+.pp-risk-card,
+.pp-opportunity-card,
+.pp-launcher-card {
+    min-height: 350px;
+}
+
+.pp-risk-card .pp-card-detail,
+.pp-opportunity-card .pp-card-detail {
+    margin-top: 1.1rem;
+    padding-top: 1.1rem;
+    border-top: 1px solid var(--pp-border);
+}
+
+.pp-workspace-grid .pp-launcher-card {
+    min-height: 300px;
+}
+
+.pp-workspace-grid .pp-feed-action {
+    margin-top: 1.3rem;
+}
+
+/* --------------------------------------------------------------------------
+   24. Typography Refinement
+   -------------------------------------------------------------------------- */
+
+.pp-section-title {
+    font-size: clamp(2.3rem, 3.4vw, 3.45rem);
+    line-height: 1.04;
+}
+
+.pp-section-subtitle {
+    max-width: 900px;
+    font-size: 0.98rem;
+}
+
+.pp-card-title {
+    font-weight: 840;
+}
+
+.pp-card-desc,
+.pp-decision-text {
+    font-size: 0.94rem;
+}
+
+/* --------------------------------------------------------------------------
+   25. GM-20 Responsive
+   -------------------------------------------------------------------------- */
+
+@media (max-width: 1180px) {
+    .pp-hero-gm20 {
+        min-height: 660px;
+    }
+
+    .pp-health-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .pp-brief-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .pp-brief-card {
+        min-height: 0;
+    }
+}
+
+@media (max-width: 820px) {
+    .pp-hero-gm20 {
+        min-height: 0;
+        padding: 2.35rem 1.5rem;
+    }
+
+    .pp-hero-gm20 .pp-hero-title {
+        font-size: clamp(2.8rem, 12vw, 4.2rem) !important;
+    }
+
+    .pp-hero-metrics,
+    .pp-health-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .pp-hero-metric {
+        min-height: 145px;
+    }
+
+    .pp-decision-card,
+    .pp-health-card,
+    .pp-risk-card,
+    .pp-opportunity-card,
+    .pp-launcher-card {
+        min-height: 0;
+    }
+}
+
